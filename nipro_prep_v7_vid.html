@@ -1,0 +1,3169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nipro · Dep Manager Round Prep · v7</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    /* v7 palette — forest green / warm stone, distinct from v6 navy/cream */
+    --forest: #2d4a3a;
+    --forest-soft: #426452;
+    --moss: #6b8a73;
+    --accent: #b8612b;
+    --accent-soft: #e0b89c;
+    --paper: #f5f2ec;
+    --paper-warm: #ebe6dc;
+    --ink: #1f2622;
+    --ink-soft: #4a534c;
+    --muted: #8a8a82;
+    --rule: #d4cdbf;
+    --highlight: #f3e4a8;
+    --highlight-strong: #ecd16a;
+    --green-tick: #2d5a3d;
+    --amber: #a06624;
+    --red: #a04030;
+  }
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 24px 20px 80px;
+  }
+  header {
+    border-bottom: 2px solid var(--forest);
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-size: 28px;
+    color: var(--forest);
+    line-height: 1.15;
+    margin-bottom: 10px;
+    font-weight: 800;
+  }
+  .subtitle {
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--ink-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .meta span { display: inline-flex; align-items: center; gap: 6px; }
+  .meta .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Session tracker — visible always */
+  .tracker {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: center;
+    font-size: 13px;
+  }
+  .tracker .stat { display: flex; flex-direction: column; gap: 2px; }
+  .tracker .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .tracker .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--forest);
+  }
+  .tracker .stat-value.warn { color: var(--amber); }
+  .tracker .stat-value.good { color: var(--green-tick); }
+  .tracker-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+  .tracker button {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .tracker button:hover { background: var(--paper); border-color: var(--forest-soft); }
+  .tracker button.danger:hover { background: #fbe9e5; border-color: var(--red); color: var(--red); }
+
+  /* Tabs */
+  nav.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 26px;
+  }
+  nav.tabs button {
+    background: none;
+    border: none;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-family: inherit;
+  }
+  nav.tabs button:hover { color: var(--forest-soft); }
+  nav.tabs button.active {
+    color: var(--forest);
+    border-bottom-color: var(--accent);
+  }
+
+  /* Section visibility */
+  section { display: none; }
+  section.active { display: block; }
+
+  h2 {
+    font-size: 22px;
+    color: var(--forest);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 16px;
+    color: var(--forest-soft);
+    margin: 22px 0 10px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+    padding: 10px 14px;
+    background: var(--paper-warm);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+  }
+  p { margin-bottom: 12px; }
+  ul, ol { margin-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; }
+  strong, b { color: var(--ink); font-weight: 700; }
+  em { color: var(--forest-soft); font-style: italic; }
+  code {
+    background: var(--paper-warm);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  /* Translator drill cards — the core feature */
+  .drill-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .drill-controls input[type="search"] {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: inherit;
+    background: white;
+  }
+  .drill-controls input:focus { outline: none; border-color: var(--forest); }
+  .drill-controls .filter-btn {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-family: inherit;
+  }
+  .drill-controls .filter-btn.active {
+    background: var(--forest);
+    color: white;
+    border-color: var(--forest);
+  }
+
+  .translator-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .translator-card.marked-good { border-left: 4px solid var(--green-tick); }
+  .translator-card.marked-shaky { border-left: 4px solid var(--amber); }
+  .translator-card.marked-bad { border-left: 4px solid var(--red); }
+
+  .translator-natural {
+    padding: 12px 16px;
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--rule);
+  }
+  .translator-natural .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .translator-natural .text {
+    font-size: 15px;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .translator-pm {
+    padding: 12px 16px;
+    background: white;
+  }
+  .translator-pm.hidden { display: none; }
+  .translator-pm .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--forest);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .translator-pm .text {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .translator-pm .note {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding-top: 8px;
+    border-top: 1px dashed var(--rule);
+  }
+  .translator-actions {
+    display: flex;
+    gap: 6px;
+    padding: 8px 16px 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .translator-actions .reveal-btn {
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .translator-actions .reveal-btn.revealed {
+    background: var(--moss);
+  }
+  .translator-actions .mark-btn {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .translator-actions .mark-btn:hover { background: var(--paper); }
+  .translator-actions .mark-btn.active.good { background: #d8e8dc; border-color: var(--green-tick); color: var(--green-tick); }
+  .translator-actions .mark-btn.active.shaky { background: #f5e8c4; border-color: var(--amber); color: var(--amber); }
+  .translator-actions .mark-btn.active.bad { background: #f5d8d0; border-color: var(--red); color: var(--red); }
+  .translator-actions .reps {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .translator-actions .reps strong { color: var(--forest); font-size: 13px; }
+
+  /* STAR story cards */
+  .star-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .star-card-header {
+    background: var(--forest);
+    color: white;
+    padding: 14px 18px;
+  }
+  .star-card-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 18px;
+  }
+  .star-card-header .subtitle {
+    color: var(--accent-soft);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .star-card-body {
+    padding: 18px;
+  }
+  .star-block {
+    margin-bottom: 14px;
+    padding-left: 14px;
+    border-left: 3px solid var(--paper-warm);
+  }
+  .star-block.hidden { display: none; }
+  .star-block .star-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .star-block .star-text {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.65;
+  }
+  .star-block .star-text strong { color: var(--forest); }
+  .star-recall-controls {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .star-recall-controls .recall-btn {
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .star-recall-controls .recall-btn.revealed {
+    background: var(--moss);
+  }
+  .star-recall-controls .star-mark {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .star-recall-controls .star-mark.active.good { background: #d8e8dc; border-color: var(--green-tick); color: var(--green-tick); }
+  .star-recall-controls .star-mark.active.shaky { background: #f5e8c4; border-color: var(--amber); color: var(--amber); }
+  .star-recall-controls .star-mark.active.bad { background: #f5d8d0; border-color: var(--red); color: var(--red); }
+  .star-recall-controls .reps {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .star-recall-controls .reps strong { color: var(--forest); font-size: 13px; }
+
+  /* Question drill cards */
+  .qd-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .qd-card .qd-question {
+    padding: 12px 16px;
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--rule);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--forest);
+  }
+  .qd-card .qd-weight {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+  .qd-scaffold {
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--ink);
+    background: white;
+    line-height: 1.6;
+  }
+  .qd-scaffold.hidden { display: none; }
+  .qd-scaffold ul { margin-left: 18px; }
+  .qd-scaffold li { margin-bottom: 6px; }
+  .qd-scaffold .anchor {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .qd-scaffold .anchor strong { color: var(--accent); }
+  .qd-actions {
+    padding: 8px 16px 12px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .qd-actions .reveal-btn {
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .qd-actions .reveal-btn.revealed { background: var(--moss); }
+  .qd-actions .reps {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .qd-actions .reps strong { color: var(--forest); font-size: 13px; }
+
+  /* Voice-rehearsal cards */
+  .voice-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px 16px;
+    align-items: start;
+    font-size: 14px;
+  }
+  .voice-card .slip {
+    color: var(--red);
+    font-weight: 600;
+    font-style: italic;
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+  }
+  .voice-card .fix {
+    color: var(--forest);
+    font-weight: 700;
+  }
+  .voice-card .arrow {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .voice-card .note {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding-top: 6px;
+    border-top: 1px dashed var(--rule);
+    margin-top: 4px;
+  }
+
+  /* Inline tip / aside boxes */
+  .tip {
+    background: #e6efe9;
+    border-left: 3px solid var(--green-tick);
+    padding: 10px 14px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .tip strong { color: var(--green-tick); }
+  .warn {
+    background: #f5e8c4;
+    border-left: 3px solid var(--amber);
+    padding: 10px 14px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .warn strong { color: var(--amber); }
+
+  /* Progress chip on tab buttons */
+  nav.tabs button .chip {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 5px;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+  nav.tabs button .chip.zero {
+    background: var(--rule);
+    color: var(--muted);
+  }
+
+  /* ============================================================
+     MEDTECH CRASH COURSE
+     ============================================================ */
+  .module {
+    background: white;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--forest);
+    border-radius: 6px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .module.done {
+    border-left-color: var(--green-tick);
+    background: #f7faf6;
+  }
+  .module-header {
+    padding: 16px 20px;
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .module.done .module-header {
+    background: #e8f0e8;
+  }
+  .module-num {
+    background: var(--forest);
+    color: white;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .module.done .module-num { background: var(--green-tick); }
+  .module.done .module-num::after { content: ' ✓'; }
+  .module-title {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.3;
+  }
+  .module-meta {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .module-toggle {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .module-body {
+    padding: 20px 24px 24px;
+    display: none;
+  }
+  .module.open .module-body { display: block; }
+  .module-body h4 {
+    color: var(--forest);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .module-body h4:first-child { margin-top: 0; }
+  .module-body p { margin-bottom: 10px; font-size: 14.5px; }
+  .module-body ul, .module-body ol {
+    margin-left: 22px;
+    margin-bottom: 10px;
+    font-size: 14.5px;
+  }
+  .module-body li { margin-bottom: 6px; }
+  .module-body strong { color: var(--ink); }
+  .module-body em { color: var(--ink-soft); }
+  .concept-box {
+    background: var(--paper-warm);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 14px;
+    border-radius: 0 4px 4px 0;
+  }
+  .concept-box strong { color: var(--accent); }
+  .pm-frame {
+    background: #eaf0ec;
+    border-left: 3px solid var(--forest);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 14px;
+    border-radius: 0 4px 4px 0;
+  }
+  .pm-frame strong { color: var(--forest); }
+  .say-box {
+    background: #fdf6e3;
+    border: 1px solid var(--highlight-strong);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  .say-box .say-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    font-weight: 700;
+    color: var(--amber);
+    margin-bottom: 6px;
+  }
+  .say-box .say-quote {
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .links-list {
+    list-style: none;
+    margin-left: 0 !important;
+    padding-left: 0;
+  }
+  .links-list li {
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--rule);
+    font-size: 14px;
+  }
+  .links-list li:last-child { border-bottom: none; }
+  .links-list a {
+    color: var(--forest);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .links-list a:hover { text-decoration: underline; color: var(--accent); }
+  .links-list .link-tag {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .link-tag.essential { background: var(--accent); color: white; }
+  .link-tag.recommended { background: var(--moss); color: white; }
+  .link-tag.optional { background: var(--rule); color: var(--ink-soft); }
+  .link-tag.audio { background: var(--forest); color: white; }
+  .links-list .link-desc {
+    display: block;
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 400;
+    margin-top: 3px;
+  }
+  .quiz-block {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-top: 14px;
+  }
+  .quiz-block .quiz-q {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .quiz-block .quiz-a {
+    display: none;
+    background: white;
+    border-left: 3px solid var(--green-tick);
+    padding: 10px 14px;
+    margin-top: 8px;
+    font-size: 14px;
+    border-radius: 0 4px 4px 0;
+  }
+  .quiz-block.revealed .quiz-a { display: block; }
+  .quiz-controls {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .quiz-controls button {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .quiz-controls button:hover { background: var(--paper-warm); }
+  .module-footer {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .mark-done-btn {
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .mark-done-btn:hover { background: var(--forest-soft); }
+  .module.done .mark-done-btn {
+    background: white;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+  }
+  .module.done .mark-done-btn::before { content: '✓ Done — '; }
+  .module-time-spent {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .medtech-overview {
+    background: linear-gradient(135deg, var(--paper-warm) 0%, #e6e0d2 100%);
+    border-radius: 6px;
+    padding: 18px 22px;
+    margin-bottom: 22px;
+  }
+  .medtech-overview h3 { color: var(--forest); margin-bottom: 8px; }
+  .progress-bar-wrap {
+    margin-top: 14px;
+    background: rgba(45, 74, 58, 0.12);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    background: var(--forest);
+    height: 100%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+  }
+
+  /* Acronym table + concepts list for Module 6 upgrade */
+  .acronym-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 12px 0 16px;
+  }
+  .acronym-table th {
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--paper-warm);
+    border-bottom: 2px solid var(--rule);
+    color: var(--forest);
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .acronym-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  .acronym-table td:first-child {
+    font-weight: 700;
+    color: var(--forest);
+    white-space: nowrap;
+    width: 90px;
+  }
+  .acronym-table td:last-child {
+    color: var(--ink-soft);
+  }
+  .acronym-table tr:hover td {
+    background: var(--paper-warm);
+  }
+  .concepts-list {
+    counter-reset: concept;
+    list-style: none;
+    margin-left: 0 !important;
+    padding-left: 0;
+  }
+  .concepts-list li {
+    counter-increment: concept;
+    padding: 8px 0 8px 36px;
+    border-bottom: 1px dotted var(--rule);
+    position: relative;
+    font-size: 14px;
+  }
+  .concepts-list li::before {
+    content: counter(concept, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 8px;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+  .concepts-list li:last-child { border-bottom: none; }
+  .round3-q {
+    background: #f0ebe3;
+    border-left: 3px solid var(--amber);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 14px;
+  }
+  .round3-q strong { color: var(--amber); }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .app { padding: 16px 14px 60px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    .tracker { gap: 12px; }
+    .tracker .stat-value { font-size: 16px; }
+    nav.tabs button { padding: 8px 10px; font-size: 12px; }
+    .voice-card { grid-template-columns: 1fr; gap: 4px; }
+    .star-card-body, .star-card-header { padding: 14px; }
+    .module-body { padding: 16px 16px 18px; }
+    .module-header { padding: 14px 16px; }
+    .module-title { font-size: 14px; }
+    .module-meta { display: none; }
+  }
+
+  /* Video embed blocks */
+  .video-embed-block {
+    margin: 18px 0 22px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .video-label {
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--forest);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--rule);
+    background: white;
+  }
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    background: #000;
+  }
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .video-fallback {
+    padding: 8px 16px;
+    background: #f5f2ec;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+  }
+  .video-fallback a {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .video-fallback a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div class="eyebrow">Nipro · Round 2 · Department Manager</div>
+  <h1>Rehearsal Doc · v7</h1>
+  <div class="subtitle">Closing the PM-craft gap before the dep manager round</div>
+  <div class="meta">
+    <span><span class="dot"></span>Lead time: 1–2 weeks</span>
+    <span><span class="dot"></span>Focus: PM methodology &amp; governance vocabulary</span>
+    <span><span class="dot"></span>Mode: deliberate practice, not last-minute scan</span>
+  </div>
+</header>
+
+<!-- Session tracker -->
+<div class="tracker" id="tracker">
+  <div class="stat">
+    <span class="stat-label">Sessions</span>
+    <span class="stat-value" id="t-sessions">0</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Total reps</span>
+    <span class="stat-value" id="t-reps">0</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Translations sticky</span>
+    <span class="stat-value" id="t-good">0/0</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">STAR recalls clean</span>
+    <span class="stat-value" id="t-stars">0/2</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Last session</span>
+    <span class="stat-value" id="t-last" style="font-size: 14px;">never</span>
+  </div>
+  <div class="tracker-actions">
+    <button onclick="endSession()">End session</button>
+    <button class="danger" onclick="resetProgress()">Reset</button>
+  </div>
+</div>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="how" class="active">How to use</button>
+  <button data-tab="translator">Translator <span class="chip zero" id="chip-translator">0/0</span></button>
+  <button data-tab="moza">Moza STAR</button>
+  <button data-tab="mulala">Mulala STAR</button>
+  <button data-tab="drill">Question drill <span class="chip zero" id="chip-drill">0/0</span></button>
+  <button data-tab="voice">Voice cues</button>
+  <button data-tab="medtech">MedTech crash course <span class="chip zero" id="chip-medtech">0/6</span></button>
+  <button data-tab="brief">Round-2 brief</button>
+</nav>
+
+<!-- ============================================================
+     SECTION 1 — HOW TO USE
+     ============================================================ -->
+<section id="how" class="active">
+  <h2>How this works</h2>
+  <p class="lede">v6 was a cheat sheet — built for a 90-second scan before Mehdi's call. v7 is different. It's a deliberate-practice tool. It only works if you speak out loud, repeatedly, over the next two weeks.</p>
+
+  <h3>The gap to close</h3>
+  <p>Mehdi flagged four traits that mark a successful hire: good memory, good presentation skills, solid PM know-how, ability to pivot. The one that's furthest from how you came across in the screening is <strong>solid PM know-how</strong> — not because the experience isn't there, but because you describe your work in <em>outcomes language</em> ("we launched", "I delivered") rather than <em>PM craft language</em> ("I held the risk register", "stage-gate review at design freeze", "controlled scope variation absorbed without schedule slip").</p>
+  <p>Same projects. Same facts. Different register. The dep manager will recognise the second register and not the first.</p>
+
+  <h3>The plan</h3>
+  <ul>
+    <li><strong>Translator (the core):</strong> 30+ paired cards. Your natural phrasing on top, hidden PM register below. Don't read both — produce the PM version <em>aloud</em> first, then reveal to check. Mark each one <span style="color: var(--green-tick);">✓ sticky</span>, <span style="color: var(--amber);">~ shaky</span>, or <span style="color: var(--red);">✗ stuck</span>. Drill the shakies until they're sticky.</li>
+    <li><strong>STAR stories:</strong> Moza Banco and Mulala, fully rebuilt in PM register. Recall mode hides Action and Result so you have to retell from memory.</li>
+    <li><strong>Question drill:</strong> 12 anticipated questions weighted by JD priority (40% PM oversight / 25% planning / 25% change management / 10% budget). Read the question, answer aloud, expand the scaffold to check what you missed.</li>
+    <li><strong>Voice cues:</strong> Pronunciation slips and rhythm reminders carried over from v6.</li>
+  </ul>
+
+  <h3>Daily practice routine (15–20 min)</h3>
+  <ol>
+    <li>Open the Translator tab. Filter to <em>Shaky</em> + <em>Stuck</em> (skip what's already sticky).</li>
+    <li>Drill 8–10 cards aloud. Reveal, check, mark.</li>
+    <li>Open one STAR story. Retell from the Situation/Task only. Reveal Action/Result to check.</li>
+    <li>Pick 2 questions from the question drill. Answer aloud. Expand to check.</li>
+    <li>End session. The tracker logs your reps.</li>
+  </ol>
+
+  <div class="tip">
+    <strong>Why this matters more than you think.</strong> The dep manager will probably not ask you a single question you haven't already answered for some other interviewer at some point. The difference between passing and not passing isn't <em>what</em> you say — it's the register you say it in. PM register surfaces under pressure only if you've drilled it under no pressure first.
+  </div>
+
+  <div class="warn">
+    <strong>Risk to manage.</strong> Don't over-rehearse. Senior PMs sound a little casual when they describe their work — it's familiar to them. If your answers come out polished and rhythmic, they read as <em>prepared</em>, which paradoxically reads as <em>less senior</em>. The goal is to make PM register <em>natural</em>, not <em>performed</em>.
+  </div>
+
+  <h3>Two weeks out — week-by-week</h3>
+  <p><strong>Week 1:</strong> Heavy Translator work. Mark and drill. End the week with most cards at "sticky." Light STAR work — just read each story once aloud per day.</p>
+  <p><strong>Week 2:</strong> STAR retelling becomes the focus. Question drill twice. Translator becomes maintenance only — the shakies that didn't stick.</p>
+  <p><strong>Day before:</strong> Read the round-2 brief. Skim sticky translations. Don't drill anything new. Sleep.</p>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — TRANSLATOR
+     ============================================================ -->
+<section id="translator">
+  <h2>Translator · your language ↔ PM register</h2>
+  <p class="lede">Read the natural phrasing on top. Speak the PM register out loud <em>before</em> you reveal. Mark how it went. The sticky/shaky/stuck markers persist across sessions.</p>
+
+  <div class="drill-controls">
+    <input type="search" id="translator-search" placeholder="Search translations..." aria-label="Search">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="unmarked">Unmarked</button>
+    <button class="filter-btn" data-filter="shaky">Shaky / Stuck</button>
+    <button class="filter-btn" data-filter="good">Sticky</button>
+  </div>
+
+  <div id="translator-list">
+    <!-- populated by JS -->
+  </div>
+
+  <div class="tip" style="margin-top: 24px;">
+    <strong>How to drill effectively.</strong> Read the natural phrasing. Look up. Speak the PM register out loud as if a dep manager just asked you. Then reveal. If your version was the same shape — sticky. If you got the idea but used wrong words — shaky. If you stalled — stuck. Don't lie to yourself; the marker is for your benefit.
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — MOZA STAR
+     ============================================================ -->
+<section id="moza">
+  <h2>STAR · Moza Banco insurance product</h2>
+  <p class="lede">Regulated banking · cross-functional governance · escalation discipline. The story to lead with when the dep manager asks about regulated environments or stakeholder management.</p>
+
+  <div class="star-card" id="moza-star">
+    <div class="star-card-header">
+      <h3>Credit card insurance product · 2015</h3>
+      <div class="subtitle">Moza Banco · Maputo · 3 weeks · 6-function cross-functional matrix</div>
+    </div>
+    <div class="star-card-body">
+      <div class="star-block">
+        <div class="star-label">Situation</div>
+        <div class="star-text">In month two of my Marketing Officer tenure at Moza Banco, the Marketing Manager sponsored a workstream to design a new credit card insurance product covering a <strong>1,763-account portfolio</strong> across three customer tiers — Classic, Gold, Platinum. The brief was verbal, the deadline was three weeks, and the output had to be a complete product document ready for regulatory review and commercial launch.</div>
+      </div>
+      <div class="star-block">
+        <div class="star-label">Task</div>
+        <div class="star-text">I owned the workstream end-to-end: <strong>product design across four coverage categories</strong> (death and permanent invalidity, funeral assistance, travel insurance, hospitalisation), tier-level pricing and margin modelling, competitive benchmarking against the two incumbent providers (Global, Tranquilidade), and cross-functional sign-off across Risk, Compliance, Legal, Card Technology, IT, and Finance. One direct colleague worked alongside me on benchmarking and design.</div>
+      </div>
+      <div class="star-block hidden recall-hide">
+        <div class="star-label">Action</div>
+        <div class="star-text">I held the workstream through <strong>ad-hoc steering with directed escalation</strong> — no recurring committee, but a working tracker in spreadsheet form for the financial modelling and an email-based decision audit trail across all six functions. Status went verbal and email to my manager. Two specific challenges shaped the work. <strong>First, financial modelling for tier-level margin under regulatory pricing constraint</strong> — pricing was challenged mid-flight and I re-modelled rather than push back. That's a controlled scope variation, not a failure. <strong>Second, dependency contention with Card Technology</strong> — the insurance product needed integration with the card system and Card Tech wasn't naturally aligned. I tried lateral resolution first, then escalated through my manager when the lateral approach had run out. That's escalation discipline — knowing when vertical is the right move.</div>
+      </div>
+      <div class="star-block hidden recall-hide">
+        <div class="star-label">Result</div>
+        <div class="star-text">The product launched to <strong>general release</strong> across the three tiers — no event, but commercially activated and regulatorily approved. The pricing re-modelling held. The Card Technology integration shipped. Beyond this workstream, I went on to design a <strong>national branch performance and customer intelligence survey across 30+ branches</strong> that became a standard for the organisation, and scoped a mobile banking application to demo stage. The credit card insurance product was the one that taught me what cross-functional governance under regulatory pressure actually feels like.</div>
+      </div>
+      <div class="star-recall-controls">
+        <button class="recall-btn" data-target="moza-star">Reveal Action &amp; Result</button>
+        <button class="star-mark good" data-mark="good" data-star="moza">✓ Clean recall</button>
+        <button class="star-mark shaky" data-mark="shaky" data-star="moza">~ Got most</button>
+        <button class="star-mark bad" data-mark="bad" data-star="moza">✗ Stalled</button>
+        <span class="reps">Reps: <strong id="reps-moza">0</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>Why this story works for Nipro.</strong> Six-function cross-functional matrix in a regulated environment is the exact shape of the Digital Ecosystem PM role. Risk / Compliance / Legal / IT / Finance / Card Tech maps almost 1:1 to R&amp;D / IT / Quality / Regulatory / Software Development / Commercial. The dep manager will recognise the structure immediately. <strong>Lead with this story for any regulated-environment or stakeholder-management probe.</strong>
+  </div>
+
+  <div class="warn">
+    <strong>Two probes to be ready for.</strong>
+    <br><br>
+    <strong>"Three weeks isn't very long for a six-function product workstream — what did you cut?"</strong> Honest answer: nothing was cut, but the depth of regulatory review was light because we framed the output as a <em>product document for regulatory review</em>, not a regulatorily approved product. Regulatory review came after my deliverable. A longer-cycle MedTech project wouldn't compress the same way.
+    <br><br>
+    <strong>"How would this look in a regulated MedTech environment with stage gates?"</strong> Different cadence. Stage-gate reviews at design freeze, design verification, design transfer. RAID log maintained throughout. Change Control Board approving any scope variation. The principles transfer; the artefacts get heavier.
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — MULALA STAR
+     ============================================================ -->
+<section id="mulala">
+  <h2>STAR · Mulala app launch</h2>
+  <p class="lede">End-to-end software product ownership · two-vendor delivery · iterative releases · structured B2B distribution outreach · controlled fade. The story to lead with when the dep manager probes software development lifecycles or product ownership.</p>
+
+  <div class="star-card" id="mulala-star">
+    <div class="star-card-header">
+      <h3>Mulala consumer mobile app · 2016–2017</h3>
+      <div class="subtitle">Lusophone Africa · Android (Jul 2016) + iOS (Jun 2017) · founder-owned · iterative delivery</div>
+    </div>
+    <div class="star-card-body">
+      <div class="star-block">
+        <div class="star-label">Situation</div>
+        <div class="star-text">In 2016, through Crossmedia, I founded <strong>Mulala</strong> — a Portuguese-language comedy mobile app targeting Lusophone Africa, principally Angola and Mozambique, audience 15–30 in urban zones. The market gap: comedy content for Portuguese-speaking African audiences had no native distribution surface. I was the sole product owner, sole budget owner, and accountable PM for delivery, with my own dedicated brand domain and email (mulala.me).</div>
+      </div>
+      <div class="star-block">
+        <div class="star-label">Task</div>
+        <div class="star-text">Ship Android first, then iOS, under a self-funded budget envelope. Manage a small external team — engineering studio for build, freelance designer for brand identity. Produce written specs, manage iterative releases, run AWS-based backend infrastructure (S3, SES for outbound communications), and a Mailchimp-based subscriber loop. Make scope decisions under cost constraint without expanding the budget.</div>
+      </div>
+      <div class="star-block hidden recall-hide">
+        <div class="star-label">Action</div>
+        <div class="star-text">I ran the engineering studio (<strong>MobileFirst, Lisbon — Ricardo Batista as lead developer</strong>, an established Crossmedia delivery partner across other client work) and the design freelancer (Samantha Santos) against a written backlog with iterative releases. Android shipped <strong>v0.17 in late June 2016</strong>, with rapid iterations through <strong>v1.1, v1.12, v1.3</strong> over the next four months — explicit version control via Bitbucket, feature acceptance against spec, weekly check-ins. iOS shipped to App Store review in <strong>June 2017</strong>. <strong>Iterative in shape, lighter on ritual than a regulated environment would require — no formal Scrum ceremonies, but disciplined version-by-version delivery.</strong> Operational layer: AWS S3 for content, AWS SES for transactional email (when bounce-rate enforcement hit, I handled the appeal directly with Amazon — primary evidence of running the operational layer myself), Mailchimp for engagement campaigns, Bitbucket for code, Crashlytics for production analytics. <strong>Distribution strategy</strong>: post-launch I ran a structured outreach to Angolan telcos and digital distributors — <strong>Zap Angola in October 2016, Unitel in September 2017</strong>. The Unitel approach was a brand partnership pitch first, escalated to a <strong>licensing offer covering all markets where Unitel operated or might enter</strong> when the partnership stalled.</div>
+      </div>
+      <div class="star-block hidden recall-hide">
+        <div class="star-label">Result</div>
+        <div class="star-text">Mulala shipped to <strong>Google Play (2016) and App Store (2017)</strong> with active users. The build worked, the product was live, the operational mechanics held. The hard part was business, not technical: <strong>monetisation didn't materialise on organic acquisition, and neither distribution conversation closed</strong> — Zap didn't progress, Unitel didn't respond to the licensing offer. Active development stopped after the iOS launch cycle in 2017; the brand continued to live socially through community contributors. <strong>Bounded experiment, contained downside, lessons retained.</strong> The full surface — founder-product-owner end-to-end, two-vendor delivery (engineering + design), iterative releases, written backlog, scope discipline, AWS operational layer, structured B2B partnership outreach, controlled fade rather than escalating spend — is the closest analogue I have to running a software product through its lifecycle in a constrained environment.</div>
+      </div>
+      <div class="star-recall-controls">
+        <button class="recall-btn" data-target="mulala-star">Reveal Action &amp; Result</button>
+        <button class="star-mark good" data-mark="good" data-star="mulala">✓ Clean recall</button>
+        <button class="star-mark shaky" data-mark="shaky" data-star="mulala">~ Got most</button>
+        <button class="star-mark bad" data-mark="bad" data-star="mulala">✗ Stalled</button>
+        <span class="reps">Reps: <strong id="reps-mulala">0</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>Why this story works for Nipro.</strong> The role description names "connected medical devices and software development lifecycles." Mulala is the closest thing you have to that — full SDLC, two-vendor model (engineering + design), iterative releases with explicit version control, written backlog, scope discipline, AWS operational layer, post-launch distribution strategy. <strong>Lead with this for any software product ownership probe</strong> and use it as your honest answer to "have you shipped software end-to-end?"
+  </div>
+
+  <div class="warn">
+    <strong>Three probes to be ready for.</strong>
+    <br><br>
+    <strong>"Did you run formal Scrum?"</strong> Don't pretend. <em>"We didn't run formal Scrum ceremonies. The cadence was iterative releases — v0.17, v1.1, v1.12, v1.3 over a few months — with feature acceptance against the spec and explicit version control on Bitbucket. Iterative in shape, lighter on ritual than a regulated environment would require."</em>
+    <br><br>
+    <strong>"Why did Mulala fail?"</strong> It didn't fail in execution — it shipped to both stores. It failed on monetisation and distribution. <em>"The build worked. The unit economics didn't. I pursued Zap Angola and then Unitel for distribution scale; neither closed. Active development stopped rather than fund another cycle from my own budget. The lesson was about commercial validation before scaling, not about delivery."</em> That answer reads as senior. "It failed" doesn't.
+    <br><br>
+    <strong>"What was the deal you proposed to Unitel?"</strong> Two-stage. First a brand partnership — Unitel as launch partner getting earned media, visibility, and exposure to the youth/CPLP segment. When that stalled, I escalated to a <em>licensing offer covering all Unitel markets, current and future</em>. Neither closed. The contact was Adilson Pascoal in Marketing, mobile content and partnerships.
+  </div>
+
+</section>
+
+<!-- ============================================================
+     SECTION 5 — QUESTION DRILL
+     ============================================================ -->
+<section id="drill">
+  <h2>Question drill · weighted by JD priority</h2>
+  <p class="lede">Read the question. Answer aloud. <em>Then</em> expand the scaffold to check what you missed. Reps tracked.</p>
+
+  <div class="drill-controls">
+    <input type="search" id="drill-search" placeholder="Search questions..." aria-label="Search drill">
+    <button class="filter-btn active" data-drill-filter="all">All</button>
+    <button class="filter-btn" data-drill-filter="oversight">PM oversight</button>
+    <button class="filter-btn" data-drill-filter="planning">Planning</button>
+    <button class="filter-btn" data-drill-filter="change">Change mgmt</button>
+    <button class="filter-btn" data-drill-filter="budget">Budget</button>
+  </div>
+
+  <div id="drill-list">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 6 — VOICE CUES
+     ============================================================ -->
+<section id="voice">
+  <h2>Voice cues · pronunciation &amp; rhythm</h2>
+  <p class="lede">Carried forward from v6 + new ones for the dep manager round. Speak each line aloud once before any practice session.</p>
+
+  <h3>Slips to watch</h3>
+
+  <div class="voice-card">
+    <span class="slip">"12 years preparing"</span>
+    <span><span class="arrow">→</span> <span class="fix">"12 months preparing"</span></span>
+    <div class="note">Slipped repeatedly in pre-Mehdi rehearsal. The Belgium transition is 2 years; the focused certification stack is the last 12 months. Don't compress.</div>
+  </div>
+
+  <div class="voice-card">
+    <span class="slip">"this row"</span>
+    <span><span class="arrow">→</span> <span class="fix">"this role"</span></span>
+    <div class="note">Mispronunciation under pressure. Slow down on r-l contrast.</div>
+  </div>
+
+  <div class="voice-card">
+    <span class="slip">"warehouse"</span>
+    <span><span class="arrow">→</span> <span class="fix">"operational role at Toyota"</span></span>
+    <div class="note">The word "warehouse" never crosses your lips in the interview. Operational role. That's all.</div>
+  </div>
+
+  <div class="voice-card">
+    <span class="slip">Rushed 60-sec opener</span>
+    <span><span class="arrow">→</span> <span class="fix">80–90 sec, four landing beats</span></span>
+    <div class="note">Pause between beats. The dep manager is patient; let each beat land. Don't rush.</div>
+  </div>
+
+  <div class="voice-card">
+    <span class="slip">"prioritisation"</span>
+    <span><span class="arrow">→</span> <span class="fix">"sequencing"</span></span>
+    <div class="note">"Prioritisation" without context is vague. "Sequencing" implies dependencies, deadlines, and a thought process. Use it.</div>
+  </div>
+
+  <h3>Phrases to deploy</h3>
+
+  <div class="voice-card">
+    <span class="fix">"Long-term fit, not a stepping stone."</span>
+    <span style="color: var(--ink-soft); font-size: 13px;">For overqualified / why-this-role probes. Verbatim phrase.</span>
+  </div>
+
+  <div class="voice-card">
+    <span class="fix">"I want to be straight with you on this."</span>
+    <span style="color: var(--ink-soft); font-size: 13px;">Before naming a gap (IEC 62304, French, formal Scrum). Disarms by acknowledging directly.</span>
+  </div>
+
+  <div class="voice-card">
+    <span class="fix">"That's the right PM call."</span>
+    <span style="color: var(--ink-soft); font-size: 13px;">When describing a scope decision under constraint. Owns the decision rather than narrating around it.</span>
+  </div>
+
+  <div class="voice-card">
+    <span class="fix">"Bounded experiment, contained downside, lessons retained."</span>
+    <span style="color: var(--ink-soft); font-size: 13px;">For Mulala ending. Senior framing. Don't say "it failed."</span>
+  </div>
+
+  <div class="voice-card">
+    <span class="fix">"Lateral resolution first, then vertical when it ran out."</span>
+    <span style="color: var(--ink-soft); font-size: 13px;">For escalation stories. Shows discipline rather than reflex escalation.</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 7 — MEDTECH PM CRASH COURSE
+     ============================================================ -->
+<section id="medtech">
+  <h2>MedTech PM crash course</h2>
+  <p class="lede">Self-built equivalent of the MedicalDeviceHQ "Introduction to Project Management for Product Development of Medical Devices" course (€399). Six modules, ~8 hours total at 1.5× speed. Built so the dep manager round and Round 3 PM round both find the right depth when probed.</p>
+
+  
+  <div class="video-embed-block" style="margin-bottom: 22px;">
+    <div class="video-label">📺 Video companion — MedTech PM Overview</div>
+    <div class="video-container">
+      <iframe 
+        src="https://www.youtube.com/embed/I51alCWRPpY" 
+        title="MedTech PM Overview" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+<div class="medtech-overview">
+    <h3>The plan</h3>
+    <p style="margin-bottom: 8px;"><strong>Before dep manager round (~3 hours):</strong> Module 1 only. Design controls is the single highest-leverage topic. Closing this gap is what upgrades your answer quality on "how would you actually run a medical device project."</p>
+    <p style="margin-bottom: 8px;"><strong>Between Round 2 and Round 3 (~5 hours):</strong> Modules 2–6. Risk management, IEC 62304 software upgrade, MedTech PM register, MDR operational, and a vocabulary recap.</p>
+    <p style="margin-bottom: 0;"><strong>If you progress past Round 3:</strong> Buy MedicalDeviceHQ. By then the prerequisite ("good knowledge of design controls") is genuinely true and the live classroom delivers full value.</p>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="medtech-progress" style="width: 0%;"></div></div>
+    <div style="margin-top: 6px; font-size: 12px; color: var(--ink-soft);"><span id="medtech-progress-text">0 of 6 modules complete</span></div>
+  </div>
+
+  <!-- ============== MODULE 1 ============== -->
+  <div class="module" id="mod-1">
+    <div class="module-header" data-mod="1">
+      <span class="module-num">1</span>
+      <span class="module-title">Design controls — the load-bearing wall</span>
+      <span class="module-meta">~3 hours · pre-Round-2</span>
+      <span class="module-toggle">+</span>
+    </div>
+    <div class="module-body">
+      <div class="video-embed-block">
+        <div class="video-label">📺 Video companion — Design Controls Deep Dive</div>
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/g5g5dIO6Jio" 
+            title="Design Controls Deep Dive" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-fallback">
+          <a href="https://youtu.be/g5g5dIO6Jio" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
+        </div>
+      </div>
+      </div>
+
+      <h4>Why this matters first</h4>
+      <p>Every probe a Nipro dep manager will throw at you on "how would you actually run a medical device project" routes through design controls. It's the operational backbone — the difference between "I understand regulations exist" and "I understand how a PM operationalises them inside a project plan." Your ISO 13485 cert touches this; this module builds the layer underneath that cert.</p>
+
+      <h4>The seven elements (memorise this)</h4>
+      <p>21 CFR 820.30 (FDA) and ISO 13485 §7.3 both describe the same process under slightly different names. Seven elements, in sequence:</p>
+      <ol>
+        <li><strong>Design and development planning</strong> — the project plan itself. Identifies interfaces between groups, assigns responsibilities, gets reviewed and updated as design evolves. <em>This is where PM lives.</em></li>
+        <li><strong>Design inputs</strong> — user needs, intended use, regulatory requirements, applicable standards. Locked, signed off, traceable. The single most common failure point in MedTech projects: weak inputs.</li>
+        <li><strong>Design outputs</strong> — drawings, specifications, software code, labelling. Each output traces back to an input.</li>
+        <li><strong>Design review</strong> — formal stage-gate meetings at planned milestones. Cross-functional. Documented. Independent reviewer required.</li>
+        <li><strong>Design verification</strong> — "did we build the thing right?" Testing that outputs meet inputs. Bench testing, code review, design analysis.</li>
+        <li><strong>Design validation</strong> — "did we build the right thing?" Testing under actual or simulated use conditions, with the actual users where possible. Includes clinical evaluation for higher-risk devices.</li>
+        <li><strong>Design transfer</strong> — moving the validated design into production. Manufacturing instructions, training, process validation.</li>
+      </ol>
+      <p>And underneath all seven: <strong>design changes</strong> (controlled change procedure) and the <strong>Design History File (DHF)</strong> — the evidentiary record of all of the above.</p>
+
+      <div class="concept-box">
+        <strong>The V-model.</strong> Search "V-model medical device design controls" — find one good diagram, screenshot it. Left arm descending: User Needs → Design Inputs → System Specs → Detail Design → Implementation. Right arm ascending: Unit Test → Integration Test → Verification → Validation. The two arms connect at each level — every design input has a corresponding verification activity. Internalise this shape. It is the single most useful visual for talking PM-of-a-medical-device-project credibly.
+      </div>
+
+      <h4>Verification vs. validation — get this right</h4>
+      <p>This is the question that catches non-MedTech PMs. The trap is to treat them as synonyms.</p>
+      <ul>
+        <li><strong>Verification</strong> = "design output meets design input." Engineering/objective. Did the device do what the spec said it should do?</li>
+        <li><strong>Validation</strong> = "design meets user needs." User/clinical. Does the device do what the user actually needs in real-world conditions?</li>
+      </ul>
+      <p>You can pass verification and fail validation. (Spec was wrong.) You can fail verification and not even reach validation. (Build was wrong.) Both are mandatory. Both produce documented evidence. Both feed the DHF.</p>
+
+      <h4>The Design History File (DHF)</h4>
+      <p>Not a folder. A <strong>controlled, auditable record</strong> of the entire design controls process. Inputs, outputs, reviews, V&amp;V results, change records, risk records, traceability matrix. Required by 21 CFR 820.30(j). The DHF is the artefact a PM <em>owns</em> — not produces at the end, but maintains throughout. If you're doing it right, the DHF is current at every stage gate; if you're doing it wrong, you're scrambling to backfill it before submission.</p>
+
+<figure class="infographic" style="margin: 18px 0;">
+<svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:720px;display:block;margin:0 auto;background:#fff;border:1px solid var(--rule);border-radius:6px;">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#2d4a3a"/>
+    </marker>
+    <marker id="arr-d" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#b8612b"/>
+    </marker>
+  </defs>
+  <!-- Title -->
+  <text x="360" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#2d4a3a" font-family="system-ui">V-Model for Medical Device Design Controls</text>
+
+  <!-- Left arm boxes (descending) -->
+  <rect x="40" y="50" width="160" height="36" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="120" y="73" text-anchor="middle" font-size="12" font-weight="600" fill="#2d4a3a" font-family="system-ui">User Needs / Intended Use</text>
+
+  <rect x="40" y="110" width="160" height="36" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="120" y="133" text-anchor="middle" font-size="12" font-weight="600" fill="#2d4a3a" font-family="system-ui">Design Inputs</text>
+
+  <rect x="40" y="170" width="160" height="36" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="120" y="193" text-anchor="middle" font-size="12" font-weight="600" fill="#2d4a3a" font-family="system-ui">Design Outputs / Specs</text>
+
+  <rect x="40" y="230" width="160" height="36" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="120" y="253" text-anchor="middle" font-size="12" font-weight="600" fill="#2d4a3a" font-family="system-ui">Detail Design / Code</text>
+
+  <!-- Right arm boxes (ascending) -->
+  <rect x="520" y="230" width="160" height="36" rx="4" fill="#fdf6e3" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="600" y="253" text-anchor="middle" font-size="12" font-weight="600" fill="#b8612b" font-family="system-ui">Unit / Component Test</text>
+
+  <rect x="520" y="170" width="160" height="36" rx="4" fill="#fdf6e3" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="600" y="193" text-anchor="middle" font-size="12" font-weight="600" fill="#b8612b" font-family="system-ui">Integration Test</text>
+
+  <rect x="520" y="110" width="160" height="36" rx="4" fill="#fdf6e3" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="600" y="133" text-anchor="middle" font-size="12" font-weight="600" fill="#b8612b" font-family="system-ui">System Verification</text>
+
+  <rect x="520" y="50" width="160" height="36" rx="4" fill="#fdf6e3" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="600" y="73" text-anchor="middle" font-size="12" font-weight="600" fill="#b8612b" font-family="system-ui">Design Validation</text>
+
+  <!-- V connecting lines -->
+  <line x1="200" y1="68" x2="360" y2="248" stroke="#2d4a3a" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="200" y1="128" x2="360" y2="248" stroke="#2d4a3a" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="200" y1="188" x2="360" y2="248" stroke="#2d4a3a" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="200" y1="248" x2="360" y2="248" stroke="#2d4a3a" stroke-width="1.5"/>
+
+  <line x1="360" y1="248" x2="520" y2="248" stroke="#b8612b" stroke-width="1.5"/>
+  <line x1="360" y1="248" x2="520" y2="188" stroke="#b8612b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="360" y1="248" x2="520" y2="128" stroke="#b8612b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="360" y1="248" x2="520" y2="68" stroke="#b8612b" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Center label -->
+  <circle cx="360" cy="248" r="22" fill="#2d4a3a"/>
+  <text x="360" y="253" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="system-ui">IMPLEMENT</text>
+
+  <!-- Side labels -->
+  <text x="120" y="310" text-anchor="middle" font-size="11" font-weight="700" fill="#2d4a3a" font-family="system-ui">← DESIGN PHASES</text>
+  <text x="600" y="310" text-anchor="middle" font-size="11" font-weight="700" fill="#b8612b" font-family="system-ui">V&V PHASES →</text>
+
+  <!-- Traceability arrows -->
+  <path d="M120,86 L120,110" stroke="#8a8a82" stroke-width="1" marker-end="url(#arr)"/>
+  <path d="M120,146 L120,170" stroke="#8a8a82" stroke-width="1" marker-end="url(#arr)"/>
+  <path d="M120,206 L120,230" stroke="#8a8a82" stroke-width="1" marker-end="url(#arr)"/>
+  <path d="M600,230 L600,206" stroke="#8a8a82" stroke-width="1" marker-end="url(#arr-d)"/>
+  <path d="M600,170 L600,146" stroke="#8a8a82" stroke-width="1" marker-end="url(#arr-d)"/>
+  <path d="M600,110 L600,86" stroke="#8a8a82" stroke-width="1" marker-end="url(#arr-d)"/>
+
+  <!-- Cross-traceability lines -->
+  <line x1="200" y1="68" x2="520" y2="68" stroke="#d4cdbf" stroke-width="0.8" stroke-dasharray="2,4"/>
+  <line x1="200" y1="128" x2="520" y2="128" stroke="#d4cdbf" stroke-width="0.8" stroke-dasharray="2,4"/>
+  <line x1="200" y1="188" x2="520" y2="188" stroke="#d4cdbf" stroke-width="0.8" stroke-dasharray="2,4"/>
+
+  <!-- Legend -->
+  <rect x="40" y="340" width="14" height="14" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1"/>
+  <text x="60" y="351" font-size="11" fill="#4a534c" font-family="system-ui">Design activities (left arm)</text>
+  <rect x="40" y="362" width="14" height="14" fill="#fdf6e3" stroke="#b8612b" stroke-width="1"/>
+  <text x="60" y="373" font-size="11" fill="#4a534c" font-family="system-ui">Verification & Validation (right arm)</text>
+  <line x1="40" y1="388" x2="70" y2="388" stroke="#d4cdbf" stroke-width="0.8" stroke-dasharray="2,4"/>
+  <text x="78" y="392" font-size="11" fill="#4a534c" font-family="system-ui">Traceability link (input ↔ output ↔ V&V)</text>
+
+  <text x="360" y="410" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">Every design input must link to a verification method. Every user need must link to a validation activity.</text>
+</svg>
+<figcaption style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px;">Figure 1: The V-Model links design phases (left) to verification & validation phases (right) through traceability.</figcaption>
+</figure>
+      <div class="concept-box">
+        <strong>The three D-files.</strong> Every MedTech PM must know all three by name: <strong>DHF</strong> (Design History File) — the controlled record of the design process; <strong>DMR</strong> (Device Master Record) — the definitive "recipe" for manufacturing (drawings, specs, procedures, acceptance criteria); <strong>DHR</strong> (Device History Record) — the auditable production diary for each batch or unit (dates, quantities, acceptance records, UDI). The DHF proves you designed it right; the DMR tells anyone how to build it; the DHR proves each unit was built to the DMR. Nipro ships physical devices — the DMR and DHR are where manufacturing and quality live.
+      </div>
+
+<figure class="infographic" style="margin: 18px 0;">
+<svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;background:#fff;border:1px solid var(--rule);border-radius:6px;">
+  <defs>
+    <marker id="arr2" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#2d4a3a"/>
+    </marker>
+  </defs>
+  <text x="350" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#2d4a3a" font-family="system-ui">The Three D-Files: Design → Build → Prove</text>
+
+  <!-- DHF -->
+  <rect x="30" y="45" width="190" height="110" rx="6" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="2"/>
+  <text x="125" y="70" text-anchor="middle" font-size="16" font-weight="800" fill="#2d4a3a" font-family="system-ui">DHF</text>
+  <text x="125" y="88" text-anchor="middle" font-size="11" font-weight="600" fill="#2d4a3a" font-family="system-ui">Design History File</text>
+  <text x="125" y="108" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Inputs · Outputs · Reviews</text>
+  <text x="125" y="122" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">V&V · Changes · Traceability</text>
+  <text x="125" y="142" text-anchor="middle" font-size="10" font-weight="700" fill="#b8612b" font-family="system-ui">Proves: designed correctly</text>
+
+  <!-- Arrow 1 -->
+  <line x1="230" y1="100" x2="270" y2="100" stroke="#2d4a3a" stroke-width="2" marker-end="url(#arr2)"/>
+  <text x="250" y="92" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">transfer</text>
+
+  <!-- DMR -->
+  <rect x="280" y="45" width="190" height="110" rx="6" fill="#fdf6e3" stroke="#b8612b" stroke-width="2"/>
+  <text x="375" y="70" text-anchor="middle" font-size="16" font-weight="800" fill="#b8612b" font-family="system-ui">DMR</text>
+  <text x="375" y="88" text-anchor="middle" font-size="11" font-weight="600" fill="#b8612b" font-family="system-ui">Device Master Record</text>
+  <text x="375" y="108" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Drawings · Specs · Procedures</text>
+  <text x="375" y="122" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Acceptance criteria · Labels</text>
+  <text x="375" y="142" text-anchor="middle" font-size="10" font-weight="700" fill="#b8612b" font-family="system-ui">Proves: can be built correctly</text>
+
+  <!-- Arrow 2 -->
+  <line x1="480" y1="100" x2="520" y2="100" stroke="#2d4a3a" stroke-width="2" marker-end="url(#arr2)"/>
+  <text x="500" y="92" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">produce</text>
+
+  <!-- DHR -->
+  <rect x="530" y="45" width="160" height="110" rx="6" fill="#e6efe9" stroke="#2d5a3d" stroke-width="2"/>
+  <text x="610" y="70" text-anchor="middle" font-size="16" font-weight="800" fill="#2d5a3d" font-family="system-ui">DHR</text>
+  <text x="610" y="88" text-anchor="middle" font-size="11" font-weight="600" fill="#2d5a3d" font-family="system-ui">Device History Record</text>
+  <text x="610" y="108" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Batch dates · Quantities</text>
+  <text x="610" y="122" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Acceptance · UDI · Labels</text>
+  <text x="610" y="142" text-anchor="middle" font-size="10" font-weight="700" fill="#b8612b" font-family="system-ui">Proves: was built correctly</text>
+
+  <!-- Bottom note -->
+  <text x="350" y="182" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">The DHF is the design evidence. The DMR is the build recipe. The DHR is the production proof.</text>
+</svg>
+<figcaption style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px;">Figure 2: The three D-files form a chain of evidence from design intent through manufacturing to individual units.</figcaption>
+</figure>
+      <div class="pm-frame">
+        <strong>The PM-craft framing.</strong> Stage gates in your project plan map directly to design reviews. The traceability matrix (user need → input → output → V&amp;V evidence → risk control) is your living single-source-of-truth. Risk register and design changes feed each other — every change triggers a risk reassessment. Verification and validation aren't testing phases tacked on at the end; they're planned into the schedule from day one with their own resource and lead-time profile.
+      </div>
+
+      <div class="say-box">
+        <div class="say-label">After this module, you'll be able to say</div>
+        <div class="say-quote">"I'd structure the project around the design controls process — inputs locked at the input review, outputs traced to inputs, V&amp;V planned into the schedule from day one, DHF maintained as we go rather than backfilled at the end. Stage gates would map to design reviews — input review, output review, V&amp;V review, transfer review — with cross-functional sign-off and an independent reviewer at each. The traceability matrix is the artefact I'd own most actively, linking user needs through inputs and outputs to V&amp;V evidence and risk controls."</div>
+      </div>
+
+      <h4>Free study material — in priority order</h4>
+      <ul class="links-list">
+        <li>
+          <a href="https://innolitics.com/articles/fda-guidance-design-control-guidance/" target="_blank" rel="noopener">FDA Design Control Guidance — readable HTML transcript (Innolitics)</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">Innolitics transcribed the 1997 FDA PDF into HTML because the original PDF font is genuinely painful to read. Same content, hyperlinked sections, much easier on the eyes. Allow 90–120 min.</span>
+        </li>
+        <li>
+          <a href="https://www.fda.gov/media/116573/download" target="_blank" rel="noopener">FDA Design Control Guidance — original PDF (1997)</a>
+          <span class="link-tag recommended">Recommended</span>
+          <span class="link-desc">~50 pages. The canonical source. Use this if you want the original document or to cite it. Read sections 1–4 carefully, skim 5–7.</span>
+        </li>
+        <li>
+          <a href="https://www.greenlight.guru/downloads/design-controls" target="_blank" rel="noopener">Greenlight Guru — Ultimate Guide to Design Controls (free ebook)</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">Same content as the FDA guidance, written for PMs entering the field. Friendlier register. Covers DHF properly. Email gate to download. ~60–90 min.</span>
+        </li>
+        <li>
+          <a href="https://www.youtube.com/results?search_query=v-model+medical+device+design+controls" target="_blank" rel="noopener">V-model diagram — find one good visual and screenshot it</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">15 min. Without this visual you're reasoning about MedTech projects as a software PM. The image search turns up plenty of clean diagrams.</span>
+        </li>
+        <li>
+          <a href="https://www.imdrf.org/sites/default/files/docs/ghtf/final/sg3/technical-docs/ghtf-sg3-n99-9-design-control-990629.pdf" target="_blank" rel="noopener">GHTF/IMDRF Design Control Guidance (international harmonised version)</a>
+          <span class="link-tag recommended">Recommended</span>
+          <span class="link-desc">The international version of the FDA doc, cross-referenced to ISO 13485. Skim only — useful if asked about non-US regulatory.</span>
+        </li>
+        <li>
+          <a href="https://arterexmedical.com/medical-device-design-controls/" target="_blank" rel="noopener">Arterex Medical — Design Controls: Requirements, Process, Flow Chart, Examples</a>
+          <span class="link-tag optional">Optional</span>
+          <span class="link-desc">Newer summary article. Good if you want a third pass at the same material in a different voice.</span>
+        </li>
+      </ul>
+
+      <h4>Self-test — before marking this module done</h4>
+      <div class="quiz-block" data-quiz="1-1">
+        <div class="quiz-q">1. What is the difference between design verification and design validation?</div>
+        <div class="quiz-a">Verification = output meets input (engineering, objective — "did we build the thing right?"). Validation = design meets user needs in real or simulated conditions (clinical/user — "did we build the right thing?"). You can pass one and fail the other; both are mandatory; both feed the DHF.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-1">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="1-2">
+        <div class="quiz-q">2. Name the seven elements of design controls in order.</div>
+        <div class="quiz-a">Planning → Inputs → Outputs → Review → Verification → Validation → Transfer. Plus design changes (controlled change procedure) and the DHF underpinning everything.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-2">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="1-3">
+        <div class="quiz-q">3. What is the DHF, and what does a PM actually do with it during a project?</div>
+        <div class="quiz-a">Design History File. The controlled, auditable record of the design controls process: inputs, outputs, reviews, V&amp;V results, change records, traceability matrix. Required by 21 CFR 820.30(j). The PM maintains it throughout the project (current at every stage gate), not at the end. If you're scrambling to assemble it before submission, you've already failed the audit.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-3">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="1-4">
+        <div class="quiz-q">4. A stakeholder asks you "why are we doing a design review now, can't we just keep building?" What's the PM answer?</div>
+        <div class="quiz-a">Design reviews are a regulatory requirement (21 CFR 820.30(e) / ISO 13485 §7.3.5), but the operational reason is risk reduction — they catch input-output gaps before they become rework, with cross-functional sign-off and an independent reviewer. Skipping or compressing them transfers risk forward in the project where rework is more expensive and may invalidate prior verification work. The review is the cheapest way to fail-fast.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-4">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="1-5">
+        <div class="quiz-q">5. Name the three D-files and what each one proves.</div>
+        <div class="quiz-a">DHF (Design History File) — proves the device was designed correctly through controlled records of inputs, outputs, reviews, V&amp;V, and traceability. DMR (Device Master Record) — the manufacturing "recipe" containing drawings, specs, procedures, and acceptance criteria so any qualified facility can reproduce the device. DHR (Device History Record) — the auditable production diary for each batch/unit proving it was built to the DMR (dates, quantities, acceptance records, UDI).</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5">Reveal</button>
+        </div>
+      </div>
+
+      <div class="module-footer">
+        <span class="module-time-spent">Allow 2.5–3 hours total at 1.5× speed</span>
+        <button class="mark-done-btn" data-mark-mod="1">Mark module 1 complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODULE 2 ============== -->
+  <div class="module" id="mod-2">
+    <div class="module-header" data-mod="2">
+      <span class="module-num">2</span>
+      <span class="module-title">Risk management — ISO 14971</span>
+      <span class="module-meta">~1.5 hours · post-Round-2</span>
+      <span class="module-toggle">+</span>
+    </div>
+    <div class="module-body">
+      <div class="video-embed-block">
+        <div class="video-label">📺 Video companion — Risk Management: ISO 14971</div>
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/Doh0mZS2VkI" 
+            title="Risk Management: ISO 14971" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-fallback">
+          <a href="https://youtu.be/Doh0mZS2VkI" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
+        </div>
+      </div>
+      </div>
+
+      <h4>The shape of the standard</h4>
+      <p>ISO 14971:2019 is the standard for "Application of risk management to medical devices." Don't memorise the standard — memorise the <strong>process flow</strong> it mandates and the artefacts it produces.</p>
+
+      <h4>The risk management process</h4>
+      <ol>
+        <li><strong>Risk management planning</strong> — scope, criteria, responsibilities, methods. Documented up front, signed off.</li>
+        <li><strong>Risk analysis</strong> — identify hazards (sources of harm), identify foreseeable sequences of events, estimate probability of harm and severity of harm.</li>
+        <li><strong>Risk evaluation</strong> — compare estimated risks against the criteria you set in planning. Acceptable? Acceptable with controls? Unacceptable?</li>
+        <li><strong>Risk control</strong> — apply control measures, in priority order: <em>(1) inherently safe design, (2) protective measures in the device or in manufacturing, (3) information for safety</em> (labelling, training). This priority is not optional. You cannot label your way out of a design defect.</li>
+        <li><strong>Residual risk evaluation</strong> — after controls are applied, what risk remains? Is it acceptable? Risk-benefit analysis when residual risk is non-trivial.</li>
+        <li><strong>Risk management review</strong> — formal review, documented, signed off. Produces the <strong>Risk Management Report</strong>.</li>
+        <li><strong>Production and post-production information</strong> — feedback from the field updates the risk file. Risk management never stops while the device is on the market.</li>
+      </ol>
+
+<figure class="infographic" style="margin: 18px 0;">
+<svg viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;display:block;margin:0 auto;background:#fff;border:1px solid var(--rule);border-radius:6px;">
+  <defs>
+    <marker id="arr3" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#2d4a3a"/>
+    </marker>
+    <marker id="arr-r" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#b8612b"/>
+    </marker>
+  </defs>
+  <text x="300" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#2d4a3a" font-family="system-ui">ISO 14971:2019 Risk Management Process</text>
+
+  <!-- Step 1 -->
+  <rect x="180" y="38" width="240" height="38" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="300" y="55" text-anchor="middle" font-size="12" font-weight="700" fill="#2d4a3a" font-family="system-ui">1. Risk Management Planning</text>
+  <text x="300" y="69" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Scope · Criteria · Responsibilities · Methods</text>
+
+  <!-- Arrow -->
+  <line x1="300" y1="76" x2="300" y2="92" stroke="#2d4a3a" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+  <!-- Step 2 -->
+  <rect x="180" y="96" width="240" height="38" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="300" y="113" text-anchor="middle" font-size="12" font-weight="700" fill="#2d4a3a" font-family="system-ui">2. Risk Analysis</text>
+  <text x="300" y="127" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Identify hazards · Estimate probability × severity</text>
+
+  <line x1="300" y1="134" x2="300" y2="150" stroke="#2d4a3a" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+  <!-- Step 3 -->
+  <rect x="180" y="154" width="240" height="38" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="300" y="171" text-anchor="middle" font-size="12" font-weight="700" fill="#2d4a3a" font-family="system-ui">3. Risk Evaluation</text>
+  <text x="300" y="185" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Compare against acceptability criteria</text>
+
+  <line x1="300" y1="192" x2="300" y2="208" stroke="#2d4a3a" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+  <!-- Step 4 -->
+  <rect x="180" y="212" width="240" height="50" rx="4" fill="#fdf6e3" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="300" y="229" text-anchor="middle" font-size="12" font-weight="700" fill="#b8612b" font-family="system-ui">4. Risk Control</text>
+  <text x="300" y="243" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">(1) Inherently safe design →</text>
+  <text x="300" y="255" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">(2) Protective measures → (3) Information for safety</text>
+
+  <line x1="300" y1="262" x2="300" y2="278" stroke="#2d4a3a" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+  <!-- Step 5 -->
+  <rect x="180" y="282" width="240" height="38" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="300" y="299" text-anchor="middle" font-size="12" font-weight="700" fill="#2d4a3a" font-family="system-ui">5. Residual Risk Evaluation</text>
+  <text x="300" y="313" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Is remaining risk acceptable? Benefit-risk analysis?</text>
+
+  <line x1="300" y1="320" x2="300" y2="336" stroke="#2d4a3a" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+  <!-- Step 6 -->
+  <rect x="180" y="340" width="240" height="38" rx="4" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="300" y="357" text-anchor="middle" font-size="12" font-weight="700" fill="#2d4a3a" font-family="system-ui">6. Risk Management Review</text>
+  <text x="300" y="371" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Formal review · Documented · Produces RMF</text>
+
+  <line x1="300" y1="378" x2="300" y2="394" stroke="#2d4a3a" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+  <!-- Step 7 -->
+  <rect x="180" y="398" width="240" height="38" rx="4" fill="#e6efe9" stroke="#2d5a3d" stroke-width="2"/>
+  <text x="300" y="415" text-anchor="middle" font-size="12" font-weight="700" fill="#2d5a3d" font-family="system-ui">7. Production & Post-Production</text>
+  <text x="300" y="429" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Field feedback · Complaints · PMS data → loop back</text>
+
+  <!-- Loop-back arrow -->
+  <path d="M430,417 Q500,417 500,250 Q500,60 430,60 L430,76" fill="none" stroke="#b8612b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-r)"/>
+  <text x="510" y="250" text-anchor="start" font-size="10" fill="#b8612b" font-family="system-ui" font-style="italic">Continuous loop</text>
+
+  <!-- Side note -->
+  <text x="40" y="250" text-anchor="start" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">Runs in parallel</text>
+  <text x="40" y="264" text-anchor="start" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">with design controls</text>
+
+  <text x="300" y="465" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">Risk management never stops while the device is on the market.</text>
+</svg>
+<figcaption style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px;">Figure 3: ISO 14971 process flow. Risk control (step 4) follows a strict priority hierarchy. Post-production feedback loops back to update the risk file.</figcaption>
+</figure>
+      <div class="concept-box">
+        <strong>Hazard ≠ harm ≠ risk.</strong> Hazard = potential source of harm (e.g. exposed sharp edge). Harm = physical injury or damage (e.g. laceration). Risk = combination of probability of occurrence of harm and the severity of that harm. Get this language right and you sound credible immediately.
+      </div>
+
+      <div class="concept-box">
+        <strong>FMEA is not ISO 14971.</strong> This is a dangerous and frequent industry misconception. FMEA focuses on <em>component failure modes</em> — what happens when a part breaks. ISO 14971 requires analysis of <em>all hazards</em>, including those from normal, fault-free use (biocompatibility reactions, use errors, human-machine interface risks). FMEA alone does not satisfy the standard. A complete risk file needs both: FMEA for component-level failure analysis, plus ISO 14971 for the full hazard landscape including foreseeable misuse and normal-use risks.
+      </div>
+
+<figure class="infographic" style="margin: 18px 0;">
+<svg viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;display:block;margin:0 auto;background:#fff;border:1px solid var(--rule);border-radius:6px;">
+  <text x="280" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#2d4a3a" font-family="system-ui">Risk Control Hierarchy — Priority Order (ISO 14971)</text>
+
+  <!-- Level 1 -->
+  <rect x="40" y="40" width="480" height="50" rx="4" fill="#2d4a3a" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="280" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="system-ui">1. INHERENTLY SAFE DESIGN</text>
+  <text x="280" y="80" text-anchor="middle" font-size="11" fill="#e0b89c" font-family="system-ui">Eliminate the hazard through design (e.g., use low voltage instead of high voltage)</text>
+
+  <!-- Arrow down -->
+  <text x="280" y="102" text-anchor="middle" font-size="16" fill="#2d4a3a" font-family="system-ui">↓</text>
+  <text x="280" y="114" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">If impracticable, proceed to next level</text>
+
+  <!-- Level 2 -->
+  <rect x="80" y="124" width="400" height="50" rx="4" fill="#6b8a73" stroke="#6b8a73" stroke-width="1.5"/>
+  <text x="280" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="system-ui">2. PROTECTIVE MEASURES</text>
+  <text x="280" y="164" text-anchor="middle" font-size="11" fill="#f5f2ec" font-family="system-ui">Guards, alarms, interlocks, automatic shutoff — in device or manufacturing process</text>
+
+  <!-- Arrow down -->
+  <text x="280" y="186" text-anchor="middle" font-size="16" fill="#6b8a73" font-family="system-ui">↓</text>
+  <text x="280" y="198" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">If impracticable, proceed to last resort</text>
+
+  <!-- Level 3 -->
+  <rect x="120" y="208" width="320" height="28" rx="4" fill="#fdf6e3" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="280" y="227" text-anchor="middle" font-size="12" font-weight="700" fill="#b8612b" font-family="system-ui">3. INFORMATION FOR SAFETY</text>
+
+  <text x="280" y="248" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">Warnings · Contraindications · Training · Instructions for Use — last resort only</text>
+</svg>
+<figcaption style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px;">Figure 4: The control hierarchy is mandatory. You cannot label your way out of a design defect.</figcaption>
+</figure>
+      <h4>The Risk Management File (RMF)</h4>
+      <p>Like the DHF, the RMF is a living artefact maintained throughout the lifecycle. Contains: risk management plan, hazard analysis, risk estimation, risk control records, residual risk evaluation, risk management report, post-production data. Cross-references to the DHF heavily — every risk control measure should map to a design output and a verification activity.</p>
+
+      <div class="pm-frame">
+        <strong>The PM-craft framing.</strong> Risk management runs in <em>parallel</em> to design controls, not sequentially. Hazards are identified at the input stage, risk controls are designed into the outputs, controls are verified during V&amp;V, residual risk is evaluated at transfer. The RMF is owned cross-functionally — typically led by a quality or risk function, but the PM coordinates the cadence with design reviews and ensures every risk control has a verification owner and a deadline.
+      </div>
+
+      <div class="say-box">
+        <div class="say-label">After this module, you'll be able to say</div>
+        <div class="say-quote">"I'd treat the risk management file as a project artefact owned by the cross-functional team, running in parallel to design controls. Hazards identified at design input stage, controls designed into outputs, controls verified during V&amp;V, residual risk evaluated at transfer. The control hierarchy isn't optional — inherently safe design first, protective measures second, labelling and training only as a last resort. Post-market surveillance feeds back into the RMF and can trigger a design change at any point in the device lifecycle."</div>
+      </div>
+
+      <h4>Free study material</h4>
+      <ul class="links-list">
+        <li>
+          <a href="https://www.greenlight.guru/blog/iso-14971-risk-management" target="_blank" rel="noopener">Greenlight Guru — ISO 14971 Risk Management Explained</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">Best free walkthrough. Read this first. ~30 min.</span>
+        </li>
+        <li>
+          <a href="https://www.bsigroup.com/en-GB/medical-devices/our-services/iso-14971/" target="_blank" rel="noopener">BSI — ISO 14971 overview</a>
+          <span class="link-tag recommended">Recommended</span>
+          <span class="link-desc">Notified body perspective. Useful for the auditor's view of the process. ~15 min.</span>
+        </li>
+        <li>
+          <a href="https://www.johner-institute.com/articles/regulatory-affairs/and-more/iso-14971-medical-device-risk-management/" target="_blank" rel="noopener">Johner Institute — ISO 14971 article</a>
+          <span class="link-tag recommended">Recommended</span>
+          <span class="link-desc">German MedTech consultancy. Strong on the integration with EU MDR. ~25 min.</span>
+        </li>
+        <li>
+          <a href="https://www.medtecheurope.org/wp-content/uploads/2017/07/MedTech-Europe-FAQ-on-Risk-Management.pdf" target="_blank" rel="noopener">MedTech Europe — FAQ on Risk Management</a>
+          <span class="link-tag optional">Optional</span>
+          <span class="link-desc">Industry-association view. Skim for vocabulary.</span>
+        </li>
+      </ul>
+
+      <h4>Self-test</h4>
+      <div class="quiz-block" data-quiz="2-1">
+        <div class="quiz-q">1. Define hazard, harm, and risk in ISO 14971 terms.</div>
+        <div class="quiz-a">Hazard = potential source of harm. Harm = physical injury or damage. Risk = combination of probability of occurrence of harm and severity of that harm. (The exposed sharp edge is the hazard, the laceration is the harm, the risk is the combination of likelihood × severity.)</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="2-1">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="2-2">
+        <div class="quiz-q">2. What is the mandatory priority order for risk control measures?</div>
+        <div class="quiz-a">(1) Inherently safe design, (2) protective measures in the device or manufacturing process, (3) information for safety (labelling, training, instructions for use). You cannot skip the higher level for convenience — the standard requires you to demonstrate that higher-priority measures were considered and found impracticable before relying on the next level.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="2-2">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="2-3">
+        <div class="quiz-q">3. How does risk management interact with design controls in your project plan?</div>
+        <div class="quiz-a">Parallel, not sequential. Hazards at input stage, controls designed into outputs, controls verified during V&amp;V, residual risk evaluated at transfer. RMF and DHF cross-reference heavily. Every risk control should map to a design output and a verification activity. Every design change triggers a risk reassessment.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="2-3">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="2-4">
+        <div class="quiz-q">4. Why is FMEA alone insufficient for ISO 14971 compliance?</div>
+        <div class="quiz-a">FMEA analyses component failure modes — what breaks. ISO 14971 requires analysis of all hazards, including those from normal, fault-free use: biocompatibility reactions, use errors, human-machine interface risks. FMEA misses hazards that don't involve component failure. You need both: FMEA for component-level analysis plus ISO 14971 for the full hazard landscape.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="2-4">Reveal</button>
+        </div>
+      </div>
+
+      <div class="module-footer">
+        <span class="module-time-spent">Allow 1.5 hours total</span>
+        <button class="mark-done-btn" data-mark-mod="2">Mark module 2 complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODULE 3 ============== -->
+  <div class="module" id="mod-3">
+    <div class="module-header" data-mod="3">
+      <span class="module-num">3</span>
+      <span class="module-title">IEC 62304 — software lifecycle (gap upgrade)</span>
+      <span class="module-meta">~1.5 hours · post-Round-2</span>
+      <span class="module-toggle">+</span>
+    </div>
+    <div class="module-body">
+      <div class="video-embed-block">
+        <div class="video-label">📺 Video companion — IEC 62304 Software Lifecycle</div>
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/p4CWRpqh_-A" 
+            title="IEC 62304 Software Lifecycle" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-fallback">
+          <a href="https://youtu.be/p4CWRpqh_-A" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
+        </div>
+      </div>
+      </div>
+
+      <h4>The goal of this module</h4>
+      <p>Your v6 strategy already locked the IEC 62304 gap acknowledgment — you're not going to claim mastery. This module upgrades the answer from "I know I don't know it" to "I know enough about it to describe how I'd ramp on a real project, and I can talk about the structure credibly." That's the difference between a yellow flag and a green one.</p>
+
+      <h4>What IEC 62304 actually is</h4>
+      <p>"Medical device software — software lifecycle processes." The standard that defines how you develop and maintain software that's part of a medical device, or that <em>is</em> a medical device (Software as a Medical Device, SaMD). It's the software-specific layer that sits inside design controls — design controls tell you the project process; IEC 62304 tells you the software process.</p>
+
+      <h4>Software safety classification (memorise this)</h4>
+      <p>IEC 62304 classifies software into three classes based on the harm a failure could cause:</p>
+      <ul>
+        <li><strong>Class A</strong> — no injury or damage to health is possible. Lowest rigour. Many lifecycle activities are not required.</li>
+        <li><strong>Class B</strong> — non-serious injury is possible. Medium rigour.</li>
+        <li><strong>Class C</strong> — death or serious injury is possible. Highest rigour. Full lifecycle requirements apply.</li>
+      </ul>
+      <p>The classification drives <strong>everything else</strong>. The architecture documentation required, the unit testing required, the integration testing required, the change control rigour, the maintenance plan rigour. Get the classification right early — getting it wrong late is expensive.</p>
+
+<figure class="infographic" style="margin: 18px 0;">
+<svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;display:block;margin:0 auto;background:#fff;border:1px solid var(--rule);border-radius:6px;">
+  <text x="320" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#2d4a3a" font-family="system-ui">IEC 62304 Software Safety Classification</text>
+  <text x="320" y="40" text-anchor="middle" font-size="11" fill="#8a8a82" font-family="system-ui">Classification drives the rigour of every lifecycle process</text>
+
+  <!-- Class A -->
+  <rect x="30" y="55" width="170" height="110" rx="6" fill="#e6efe9" stroke="#2d5a3d" stroke-width="1.5"/>
+  <text x="115" y="80" text-anchor="middle" font-size="18" font-weight="800" fill="#2d5a3d" font-family="system-ui">CLASS A</text>
+  <text x="115" y="98" text-anchor="middle" font-size="11" font-weight="600" fill="#2d5a3d" font-family="system-ui">No injury possible</text>
+  <text x="115" y="118" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Lowest rigour</text>
+  <text x="115" y="132" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Many activities not required</text>
+  <text x="115" y="152" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui">e.g., data viewer, calculator</text>
+
+  <!-- Class B -->
+  <rect x="235" y="55" width="170" height="110" rx="6" fill="#fdf6e3" stroke="#a06624" stroke-width="1.5"/>
+  <text x="320" y="80" text-anchor="middle" font-size="18" font-weight="800" fill="#a06624" font-family="system-ui">CLASS B</text>
+  <text x="320" y="98" text-anchor="middle" font-size="11" font-weight="600" fill="#a06624" font-family="system-ui">Non-serious injury possible</text>
+  <text x="320" y="118" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Medium rigour</text>
+  <text x="320" y="132" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Integration testing required</text>
+  <text x="320" y="152" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui">e.g., dose calculator, scheduler</text>
+
+  <!-- Class C -->
+  <rect x="440" y="55" width="170" height="110" rx="6" fill="#fbe9e5" stroke="#a04030" stroke-width="2"/>
+  <text x="525" y="80" text-anchor="middle" font-size="18" font-weight="800" fill="#a04030" font-family="system-ui">CLASS C</text>
+  <text x="525" y="98" text-anchor="middle" font-size="11" font-weight="600" fill="#a04030" font-family="system-ui">Death or serious injury possible</text>
+  <text x="525" y="118" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Highest rigour</text>
+  <text x="525" y="132" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Full lifecycle requirements</text>
+  <text x="525" y="152" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui">e.g., pacemaker controller, infusion pump</text>
+
+  <!-- Bottom note -->
+  <text x="320" y="182" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">Classify based on worst foreseeable harm assuming external risk controls are absent.</text>
+</svg>
+<figcaption style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px;">Figure 5: Software safety classification determines which IEC 62304 lifecycle processes are mandatory. Getting it wrong late is expensive.</figcaption>
+</figure>
+      <div class="concept-box">
+        <strong>The most useful sentence on classification.</strong> "Software classification is a risk-based decision, made jointly with the risk management process. You classify based on the worst foreseeable harm a software failure could cause assuming all external risk controls are absent — meaning you can't classify down by saying 'a hardware lockout will catch it.' You classify the software on its own."
+      </div>
+
+      <h4>The lifecycle processes</h4>
+      <ol>
+        <li><strong>Software development planning</strong> — the SDP. Covers methodology, deliverables, integration with system-level design controls.</li>
+        <li><strong>Software requirements analysis</strong> — translates system requirements into software requirements.</li>
+        <li><strong>Software architectural design</strong> — high-level structure.</li>
+        <li><strong>Software detailed design</strong> — required for Class C; recommended for Class B.</li>
+        <li><strong>Software unit implementation and verification</strong> — code + unit tests.</li>
+        <li><strong>Software integration and integration testing</strong> — required for Class B and C.</li>
+        <li><strong>Software system testing</strong> — verify the software meets its requirements.</li>
+        <li><strong>Software release</strong> — controlled release with documented configuration.</li>
+      </ol>
+
+      <h4>SOUP — Software Of Unknown Provenance</h4>
+      <p>Probably the most distinctive concept in IEC 62304 and the one that most clearly tells you whether someone has actually worked with the standard. <strong>SOUP</strong> = software you didn't develop yourself and for which you don't have full lifecycle records — typically third-party libraries, OS components, frameworks. The standard requires you to:</p>
+      <ul>
+        <li>Identify all SOUP in your software</li>
+        <li>Specify the functional and performance requirements you need from the SOUP</li>
+        <li>Specify the system hardware and software requirements the SOUP needs</li>
+        <li>Track and evaluate published SOUP anomalies (vulnerabilities, bugs) for safety impact</li>
+      </ul>
+      <p>Every npm dependency, every open-source library, every database driver — SOUP. This is why MedTech software teams maintain a SOUP register and have explicit policies on dependency updates.</p>
+
+      <div class="concept-box">
+        <strong>AAMI TIR45 — Agile in regulated MedTech.</strong> The standard question you'll get: "How do you reconcile Agile with stage-gate?" The answer is AAMI TIR45, which maps Agile practices to IEC 62304 through layered iteration loops: Product (months/years) → Release (months) → Increment (weeks) → Story (days). Each layer maps to specific IEC 62304 clauses. In this model, "Definition of Done" expands to include documentation and QMS compliance — a task isn't done when code compiles, but when the evidence record is complete. That's how Agile software teams stay regulatorily compliant.
+      </div>
+
+<figure class="infographic" style="margin: 18px 0;">
+<svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;display:block;margin:0 auto;background:#fff;border:1px solid var(--rule);border-radius:6px;">
+  <text x="300" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#2d4a3a" font-family="system-ui">AAMI TIR45: Layered Iteration Loops</text>
+  <text x="300" y="40" text-anchor="middle" font-size="11" fill="#8a8a82" font-family="system-ui">Mapping Agile practices to IEC 62304 lifecycle processes</text>
+
+  <!-- Product Layer (outer) -->
+  <rect x="30" y="52" width="540" height="230" rx="8" fill="none" stroke="#2d4a3a" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="300" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#2d4a3a" font-family="system-ui">PRODUCT LAYER — Months to Years</text>
+  <text x="300" y="82" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Complete device development · Lifecycle planning · Architecture · Formal release (IEC 62304 §5.1, 5.3, 5.8)</text>
+
+  <!-- Release Layer -->
+  <rect x="55" y="92" width="490" height="170" rx="6" fill="none" stroke="#6b8a73" stroke-width="1.5"/>
+  <text x="300" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#6b8a73" font-family="system-ui">RELEASE LAYER — Multiple Months</text>
+  <text x="300" y="122" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Stable versions · Substantial design reviews · QMS adequacy checks</text>
+
+  <!-- Increment Layer -->
+  <rect x="80" y="132" width="440" height="110" rx="6" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1"/>
+  <text x="300" y="148" text-anchor="middle" font-size="11" font-weight="700" fill="#2d4a3a" font-family="system-ui">INCREMENT LAYER — 1 to 4 Weeks</text>
+  <text x="300" y="162" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">Feature sets · Integration testing · System testing (IEC 62304 §5.6, 5.7)</text>
+
+  <!-- Story Layer -->
+  <rect x="105" y="172" width="390" height="58" rx="4" fill="#fdf6e3" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="300" y="190" text-anchor="middle" font-size="11" font-weight="700" fill="#b8612b" font-family="system-ui">STORY LAYER — 1 to Few Days</text>
+  <text x="300" y="206" text-anchor="middle" font-size="10" fill="#4a534c" font-family="system-ui">User Story + acceptance criteria → Design Input → Architecture → Code → Test evidence → Design Output (§5.4, 5.5)</text>
+  <text x="300" y="220" text-anchor="middle" font-size="10" fill="#b8612b" font-family="system-ui">Definition of Done = code compiles AND documentation is complete AND QMS compliance is met</text>
+
+  <!-- Bottom note -->
+  <text x="300" y="278" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">In regulated Agile, a task isn't done when code compiles. It's done when the evidence record is complete.</text>
+</svg>
+<figcaption style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px;">Figure 6: TIR45 nests Agile iterations inside IEC 62304 lifecycle stages. Each inner layer maps to specific standard clauses.</figcaption>
+</figure>
+      <div class="pm-frame">
+        <strong>The PM-craft framing.</strong> "On a real IEC 62304 project I'd want to ramp on three things first": the project's software safety classification (drives everything downstream), the SOUP register and the policy for evaluating dependency anomalies, and the integration between the software development plan and the system-level design controls. The design controls process is what I'd lead from; IEC 62304 is the software-specific rigour layer that the engineering lead would own technically and I'd coordinate at programme level."
+      </div>
+
+      <div class="say-box">
+        <div class="say-label">After this module — the upgraded gap-acknowledgment</div>
+        <div class="say-quote">"I haven't run an IEC 62304-classified project end-to-end, so I'd want to ramp on it deliberately rather than wing it. What I do understand is the structure — software safety classification (A/B/C) drives the rigour of every lifecycle process, SOUP management is non-trivial and continuous, and the software development plan integrates inside system-level design controls rather than running parallel to them. On a real project I'd partner closely with the technical lead on classification decisions and SOUP policy, while I run the programme-level coordination, change control, and stage-gate integration with the broader design controls process."</div>
+      </div>
+
+      <h4>Free study material</h4>
+      <ul class="links-list">
+        <li>
+          <a href="https://en.wikipedia.org/wiki/IEC_62304" target="_blank" rel="noopener">Wikipedia — IEC 62304</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">Unusually good for a Wikipedia entry. Covers classification, lifecycle, SOUP. ~20 min.</span>
+        </li>
+        <li>
+          <a href="https://www.johner-institute.com/articles/software-iec-62304/" target="_blank" rel="noopener">Johner Institute — IEC 62304 articles (multi-part)</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">The best free deep-dive on the standard. Read the overview + classification articles. ~45 min.</span>
+        </li>
+        <li>
+          <a href="https://www.greenlight.guru/blog/iec-62304" target="_blank" rel="noopener">Greenlight Guru — IEC 62304 explained</a>
+          <span class="link-tag recommended">Recommended</span>
+          <span class="link-desc">PM-friendly summary. ~15 min.</span>
+        </li>
+        <li>
+          <a href="https://www.mastercontrol.com/gxp-lifeline/iec-62304-software-lifecycle-processes/" target="_blank" rel="noopener">MasterControl — IEC 62304 software lifecycle processes</a>
+          <span class="link-tag optional">Optional</span>
+          <span class="link-desc">Third pass on the same material if needed.</span>
+        </li>
+      </ul>
+
+      <h4>Self-test</h4>
+      <div class="quiz-block" data-quiz="3-1">
+        <div class="quiz-q">1. What are the IEC 62304 software safety classes and what determines the class?</div>
+        <div class="quiz-a">Class A (no injury possible), Class B (non-serious injury possible), Class C (death or serious injury possible). Determined by the worst foreseeable harm a software failure could cause, assuming external risk controls are absent. You can't classify down by relying on a hardware lockout — the software is classified on its own.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="3-1">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="3-2">
+        <div class="quiz-q">2. What is SOUP and what does the standard require you to do about it?</div>
+        <div class="quiz-a">Software Of Unknown Provenance — third-party software you didn't develop and for which you don't have full lifecycle records. Required: identify all SOUP, specify the functional/performance requirements you need from it, specify the hardware/software requirements it needs, and track/evaluate published anomalies for safety impact. Every dependency is SOUP. A SOUP register and a dependency-update policy are non-negotiable.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="3-2">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="3-3">
+        <div class="quiz-q">3. How does IEC 62304 relate to design controls?</div>
+        <div class="quiz-a">It sits inside design controls as the software-specific rigour layer. Design controls govern the overall project process (planning, inputs, outputs, review, V&amp;V, transfer); IEC 62304 governs the software-specific lifecycle (architecture, detailed design, unit/integration/system testing, SOUP management). The software development plan integrates with the system-level design plan; software requirements derive from system requirements; software V&amp;V feeds the system V&amp;V evidence in the DHF.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="3-3">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="3-4">
+        <div class="quiz-q">4. How does AAMI TIR45 reconcile Agile with MedTech stage-gates?</div>
+        <div class="quiz-a">TIR45 maps Agile to IEC 62304 through four layered iteration loops: Product (months/years, lifecycle planning), Release (months, design reviews), Increment (weeks, integration/system testing), Story (days, detailed design/unit implementation). In regulated Agile, "Definition of Done" expands to include documentation and QMS compliance — code compiling is necessary but not sufficient. The evidence record must be complete before the task is done.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="3-4">Reveal</button>
+        </div>
+      </div>
+
+      <div class="module-footer">
+        <span class="module-time-spent">Allow 1.5 hours total</span>
+        <button class="mark-done-btn" data-mark-mod="3">Mark module 3 complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODULE 4 ============== -->
+  <div class="module" id="mod-4">
+    <div class="module-header" data-mod="4">
+      <span class="module-num">4</span>
+      <span class="module-title">PM register applied to MedTech — listening practice</span>
+      <span class="module-meta">~2 hours · post-Round-2</span>
+      <span class="module-toggle">+</span>
+    </div>
+    <div class="module-body">
+      <div class="video-embed-block">
+        <div class="video-label">📺 Video companion — MedTech PM Register & Vocabulary</div>
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/dGn1zNvPkcg" 
+            title="MedTech PM Register & Vocabulary" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-fallback">
+          <a href="https://youtu.be/dGn1zNvPkcg" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
+        </div>
+      </div>
+      </div>
+
+      <h4>What this module is for</h4>
+      <p>Modules 1–3 build the conceptual layer. This one builds <strong>the register</strong>. Hearing actual MedTech PMs talk about Gantt charts vs. design reviews, methodology choices, and stakeholder management in a regulated environment is more useful than any course slide for translating your delivery experience into the right vocabulary. This is exactly the gap you flagged from the Mehdi screening — the v7 translator drills the register; this module gives you native examples.</p>
+
+      <h4>The plan</h4>
+      <p>Listen to Greenlight Guru's "Global Medical Device Podcast" at 1.5×–2× speed while doing something else (commute, walk, chores). You're not studying for content — you're letting the vocabulary become familiar. After ~2 hours of exposure, you'll catch yourself naturally reaching for "design review" instead of "checkpoint meeting" without thinking about it.</p>
+
+      <div class="concept-box">
+        <strong>Listen for these patterns.</strong> How they introduce themselves and their projects. How they describe scope. How they talk about risk. How they describe a problem they ran into and what they did about it. How they balance regulatory compliance with delivery pressure. The tone is almost always calmer and more specific than non-MedTech PMs — more "we noticed the input was ambiguous so we ran a clarification round before the output review" and less "we pivoted hard."
+      </div>
+
+      <h4>Curated listening order</h4>
+      <ul class="links-list">
+        <li>
+          <a href="https://www.greenlight.guru/blog/project-management-for-medical-device-product-development" target="_blank" rel="noopener">Episode: Introduction to PM for Medical Device Product Development (Devon Campbell, Christie Johnson)</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">~45 min. Direct overlap with the MedicalDeviceHQ syllabus. Listen first. The "project planning ≠ project management" point alone is worth the time.</span>
+        </li>
+        <li>
+          <a href="https://www.greenlight.guru/podcast" target="_blank" rel="noopener">Global Medical Device Podcast — full episode list</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">Filter for episodes on: design controls, design reviews, risk management, V&amp;V, software, change control. Pick 3–4 that look closest to Nipro's territory.</span>
+        </li>
+        <li>
+          <a href="https://www.medicaldevicehq.com/podcast/" target="_blank" rel="noopener">MedicalDeviceHQ podcast — Peter Sebelius</a>
+          <span class="link-tag recommended">Recommended</span>
+          <span class="link-desc">Same instructor whose course you're substituting. Free. Excellent on design controls and risk management mechanics.</span>
+        </li>
+        <li>
+          <a href="https://open.spotify.com/search/medical%20device%20podcast" target="_blank" rel="noopener">Spotify — medical device podcasts (search)</a>
+          <span class="link-tag optional">Optional</span>
+          <span class="link-desc">Several other shows in this space. MedDevice Talk, Combinate Podcast, Let's Talk Risk! all worth a sample.</span>
+        </li>
+      </ul>
+
+      <h4>Active listening exercise</h4>
+      <p>While listening, write down five phrases you hear that you wouldn't have used yourself. Bring them to your next translator drill session and add them as new translator cards. The goal is to expand your active vocabulary, not just your passive recognition.</p>
+
+      <div class="say-box">
+        <div class="say-label">After this module — vocabulary you'll have absorbed</div>
+        <div class="say-quote">"Stage gate · design freeze · design review · scope of work · regulatory submission · post-market surveillance · CAPA · nonconformance · deviation · controlled change · traceability matrix · technical file · clinical evaluation · usability engineering · post-market clinical follow-up · MDR transition · UDI · economic operator · notified body · technical documentation"</div>
+      </div>
+
+      <div class="module-footer">
+        <span class="module-time-spent">Allow ~2 hours of listening at 1.5×</span>
+        <button class="mark-done-btn" data-mark-mod="4">Mark module 4 complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODULE 5 ============== -->
+  <div class="module" id="mod-5">
+    <div class="module-header" data-mod="5">
+      <span class="module-num">5</span>
+      <span class="module-title">EU MDR — operational layer</span>
+      <span class="module-meta">~1 hour · post-Round-2</span>
+      <span class="module-toggle">+</span>
+    </div>
+    <div class="module-body">
+      <div class="video-embed-block">
+        <div class="video-label">📺 Video companion — EU MDR Operational Layer</div>
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/HLqnr7uqsxs" 
+            title="EU MDR Operational Layer" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-fallback">
+          <a href="https://youtu.be/HLqnr7uqsxs" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
+        </div>
+      </div>
+      </div>
+
+      <h4>What this module is for</h4>
+      <p>You already have the Alison EU MDR cert. That demonstrates you understand the regulation exists. This module bridges from "I have the cert" to "I understand what a Nipro PM actually delivers under MDR." It's mostly about <strong>linking MDR obligations to project artefacts</strong> — what gets produced, when, and who owns it.</p>
+
+      <h4>The PM-relevant MDR concepts</h4>
+      <ul>
+        <li><strong>Technical Documentation</strong> (Annex II and III). The full evidentiary package required for CE marking. Heavily overlaps with the DHF — most of the DHF feeds the technical documentation.</li>
+        <li><strong>Clinical Evaluation</strong> (Article 61, Annex XIV). Not the same as clinical trials. A documented procedure to evaluate clinical data — yours and from equivalent devices. PMs coordinate; clinical/regulatory functions own.</li>
+        <li><strong>Post-Market Surveillance</strong> (Article 83 onwards). Active, systematic gathering of data from devices on the market. Feeds back into risk management. PMs maintain the cadence and the project-side artefacts.</li>
+        <li><strong>UDI</strong> (Article 27). Unique Device Identification. Project deliverable: every device variant has a UDI assigned, registered, on the labelling, in EUDAMED.</li>
+        <li><strong>Economic Operators</strong> (Articles 11–14). Manufacturer, Authorised Representative, Importer, Distributor — each has obligations. PMs need to know which operator owns what.</li>
+        <li><strong>Notified Body</strong>. Third-party organisation that conducts conformity assessment for higher-risk devices. PMs coordinate the schedule with the notified body — submission dates, audit dates, response windows. NB delays are a major real-world risk.</li>
+      </ul>
+
+      <div class="concept-box">
+        <strong>The single most useful linkage.</strong> Design controls + risk management + IEC 62304 produce <em>most</em> of the technical documentation MDR requires. The PM's job is to ensure the project artefacts are produced in the form the technical documentation needs them — same format, same level of detail, same traceability. If you do that as you go, MDR submission becomes assembly. If you don't, it becomes a 6-month rework project.
+      </div>
+
+<figure class="infographic" style="margin: 18px 0;">
+<svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:640px;display:block;margin:0 auto;background:#fff;border:1px solid var(--rule);border-radius:6px;">
+  <text x="320" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#2d4a3a" font-family="system-ui">EU MDR 2017/745 Device Classification & Conformity Routes</text>
+
+  <!-- Class I -->
+  <rect x="30" y="42" width="130" height="130" rx="6" fill="#e6efe9" stroke="#2d5a3d" stroke-width="1.5"/>
+  <text x="95" y="65" text-anchor="middle" font-size="16" font-weight="800" fill="#2d5a3d" font-family="system-ui">CLASS I</text>
+  <text x="95" y="82" text-anchor="middle" font-size="10" font-weight="600" fill="#2d5a3d" font-family="system-ui">Low Risk</text>
+  <text x="95" y="100" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">Self-certification</text>
+  <text x="95" y="114" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">(sterile/measuring:</text>
+  <text x="95" y="126" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">NB involved)</text>
+  <text x="95" y="148" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">Wheelchairs · Glasses</text>
+  <text x="95" y="162" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">Bandages</text>
+
+  <!-- Class IIa -->
+  <rect x="180" y="42" width="130" height="130" rx="6" fill="#fdf6e3" stroke="#a06624" stroke-width="1.5"/>
+  <text x="245" y="65" text-anchor="middle" font-size="16" font-weight="800" fill="#a06624" font-family="system-ui">CLASS IIa</text>
+  <text x="245" y="82" text-anchor="middle" font-size="10" font-weight="600" fill="#a06624" font-family="system-ui">Low-Medium Risk</text>
+  <text x="245" y="100" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">NB conformity</text>
+  <text x="245" y="114" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">assessment</text>
+  <text x="245" y="148" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">Hearing aids</text>
+  <text x="245" y="162" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">Ultrasound</text>
+
+  <!-- Class IIb -->
+  <rect x="330" y="42" width="130" height="130" rx="6" fill="#f5e8c4" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="395" y="65" text-anchor="middle" font-size="16" font-weight="800" fill="#b8612b" font-family="system-ui">CLASS IIb</text>
+  <text x="395" y="82" text-anchor="middle" font-size="10" font-weight="600" fill="#b8612b" font-family="system-ui">Medium-High Risk</text>
+  <text x="395" y="100" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">NB conformity</text>
+  <text x="395" y="114" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">assessment</text>
+  <text x="395" y="148" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">Infusion pumps</text>
+  <text x="395" y="162" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">X-ray equipment</text>
+
+  <!-- Class III -->
+  <rect x="480" y="42" width="130" height="130" rx="6" fill="#fbe9e5" stroke="#a04030" stroke-width="2"/>
+  <text x="545" y="65" text-anchor="middle" font-size="16" font-weight="800" fill="#a04030" font-family="system-ui">CLASS III</text>
+  <text x="545" y="82" text-anchor="middle" font-size="10" font-weight="600" fill="#a04030" font-family="system-ui">High Risk</text>
+  <text x="545" y="100" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">NB + Design</text>
+  <text x="545" y="114" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">Dossier review</text>
+  <text x="545" y="148" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">Pacemakers</text>
+  <text x="545" y="162" text-anchor="middle" font-size="9" fill="#8a8a82" font-family="system-ui">Heart valves · Stents</text>
+
+  <!-- Bottom -->
+  <text x="320" y="198" text-anchor="middle" font-size="10" fill="#8a8a82" font-family="system-ui" font-style="italic">Classification follows Annex VIII rules (Rules 1–22). No grandfathering for legacy MDD devices.</text>
+</svg>
+<figcaption style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px;">Figure 7: EU MDR classification determines the conformity assessment route. Higher class = more NB involvement and evidence required.</figcaption>
+</figure>
+      <div class="concept-box">
+        <strong>The Stratification Gap — a CER failure mode.</strong> A notorious EU MDR rejection case: a surgical device manufacturer claimed broad clinical utility by generically cross-referencing literature across several disparate specialties, without compiling focused empirical data on their specific device. The "Stratification Gap" — claiming broad uses while neglecting device-specific evidence — caused formal rejection. The lesson: CER data must be strictly bounded to the device's exact intended use and patient population. Generic literature cross-referencing across specialties is not evidence.
+      </div>
+
+      <div class="pm-frame">
+        <strong>The PM-craft framing.</strong> "MDR doesn't change what I do as a PM, it changes the artefact rigour and the evidentiary chain. I'd structure the project so design controls outputs feed Annex II technical documentation directly, risk management outputs feed Annex I GSPR conformity, and post-market surveillance plans are written into the project plan from the start, not bolted on at submission. The notified body interaction is its own workstream — submission windows, audit prep, response cadence — and I'd build that into the schedule with <strong>20–30% explicit float</strong> because NB response times are not under our control. Current reality: 13–18 months for a standard device, up to 24 months for innovative Class III technology. The path isn't linear — inspectors generate hundreds of corrective questions, and the dossier stalls while the builder reiterates, rethinks, or repeats studies."
+      </div>
+
+      <div class="say-box">
+        <div class="say-label">After this module, you'll be able to say</div>
+        <div class="say-quote">"On an MDR project I'd plan the technical documentation as an output of the design process, not a separate workstream. The DHF, RMF, software lifecycle records, and clinical evaluation plan all feed Annex II directly. Notified body coordination is a workstream of its own with explicit float on the schedule because response times aren't ours to control. Post-market surveillance starts with the project plan, not after launch."</div>
+      </div>
+
+      <h4>Free study material</h4>
+      <ul class="links-list">
+        <li>
+          <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02017R0745-20230320" target="_blank" rel="noopener">EU MDR 2017/745 (consolidated text on EUR-Lex)</a>
+          <span class="link-tag recommended">Recommended</span>
+          <span class="link-desc">The regulation itself. Don't read all of it. Skim Articles 5, 10–14, 27, 32, 52–61, 83–86. ~30 min.</span>
+        </li>
+        <li>
+          <a href="https://www.medtecheurope.org/resource-library/" target="_blank" rel="noopener">MedTech Europe — Resource Library (MDR guidance)</a>
+          <span class="link-tag essential">Essential</span>
+          <span class="link-desc">Industry-association guidance. Best free operational walkthroughs. Look for the "MDR transition" series. ~30 min.</span>
+        </li>
+        <li>
+          <a href="https://health.ec.europa.eu/medical-devices-sector/new-regulations/guidance-mdcg-endorsed-documents-and-other-guidance_en" target="_blank" rel="noopener">European Commission — MDCG endorsed documents</a>
+          <span class="link-tag recommended">Recommended</span>
+          <span class="link-desc">Official guidance from the Medical Device Coordination Group. Authoritative. Skim the index, read 1–2 that look most relevant.</span>
+        </li>
+      </ul>
+
+      <h4>Self-test</h4>
+      <div class="quiz-block" data-quiz="5-1">
+        <div class="quiz-q">1. How does the DHF relate to MDR Technical Documentation?</div>
+        <div class="quiz-a">The DHF is the design controls record; the Technical Documentation (Annex II/III) is the MDR-mandated evidentiary package for CE marking. Most of the DHF content feeds the Technical Documentation directly. The PM's job is to ensure design controls outputs are produced in the form Technical Documentation needs them — so submission is assembly, not rework.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="5-1">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="5-2">
+        <div class="quiz-q">2. What's the project-level risk a notified body presents and how do you mitigate it?</div>
+        <div class="quiz-a">NB response times are not under your control — submission queue, audit scheduling, request-for-information cycles can all slip. Current reality is 13–18 months for standard devices, up to 24 months for innovative Class III. Mitigate by building 20–30% explicit float into the schedule, prepping technical documentation rigorously to minimise RFI rounds, and treating NB coordination as its own workstream with its own owner and cadence.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="5-2">Reveal</button>
+        </div>
+      </div>
+      <div class="quiz-block" data-quiz="5-3">
+        <div class="quiz-q">3. What is the Stratification Gap and why does it kill CER submissions?</div>
+        <div class="quiz-a">The Stratification Gap is a CER failure mode where a manufacturer claims broad clinical uses across disparate specialties by cross-referencing generic literature, without compiling focused empirical data on their specific device. EU MDR requires device-specific evidence strictly bounded to the exact intended use and patient population. Generic literature cross-referencing is not sufficient — the submission gets rejected for failing to cross-reference proofs, declared engineering purpose, and absolute metrics.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="5-3">Reveal</button>
+        </div>
+      </div>
+
+      <div class="module-footer">
+        <span class="module-time-spent">Allow ~1 hour</span>
+        <button class="mark-done-btn" data-mark-mod="5">Mark module 5 complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== MODULE 6 ============== -->
+  <div class="module" id="mod-6">
+    <div class="module-header" data-mod="6">
+      <span class="module-num">6</span>
+      <span class="module-title">MedTech vocabulary &amp; integration recap</span>
+      <span class="module-meta">~30 min · post-Round-2</span>
+      <span class="module-toggle">+</span>
+    </div>
+    <div class="module-body">
+      <div class="video-embed-block">
+        <div class="video-label">📺 Video companion — Integration & Recap</div>
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/uwPkCLh8QA4" 
+            title="Integration & Recap" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-fallback">
+          <a href="https://youtu.be/uwPkCLh8QA4" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
+        </div>
+      </div>
+      </div>
+
+      <h4>What this module is</h4>
+      <p>The 30-minute consolidation. Read it once after modules 1–5. Re-read the day before each interview round to refresh the vocabulary in your active memory.</p>
+
+      <h4>The integrated mental model</h4>
+      <p>This is the picture you want in your head when someone says "tell me how you'd run a medical device development project":</p>
+      <ol>
+        <li><strong>Design Controls</strong> is the project process. Inputs → Outputs → Review → V&amp;V → Transfer. DHF maintained throughout.</li>
+        <li><strong>Risk Management (ISO 14971)</strong> runs in parallel. Hazards at input stage, controls in outputs, controls verified during V&amp;V. RMF maintained throughout.</li>
+        <li><strong>IEC 62304</strong> sits inside design controls for the software portion. Classification drives rigour. SOUP managed continuously.</li>
+        <li><strong>EU MDR (or FDA equivalent)</strong> is the regulatory destination. Technical Documentation assembled from DHF + RMF + software records + clinical evaluation. Notified Body coordination is its own workstream.</li>
+        <li><strong>Post-market surveillance</strong> feeds back into risk management for the device's full market life. The project doesn't end at launch.</li>
+      </ol>
+
+<figure class="infographic" style="margin: 18px 0;">
+<svg viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;display:block;margin:0 auto;background:#fff;border:1px solid var(--rule);border-radius:6px;">
+  <defs>
+    <marker id="arr4" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#2d4a3a"/>
+    </marker>
+  </defs>
+  <text x="340" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#2d4a3a" font-family="system-ui">The Integrated Mental Model: How It All Connects</text>
+
+  <!-- Center hub -->
+  <circle cx="340" cy="170" r="55" fill="#2d4a3a"/>
+  <text x="340" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="system-ui">DESIGN</text>
+  <text x="340" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="system-ui">CONTROLS</text>
+  <text x="340" y="195" text-anchor="middle" font-size="9" fill="#e0b89c" font-family="system-ui">(21 CFR 820.30 / ISO 13485 §7.3)</text>
+
+  <!-- Top: Risk Management -->
+  <rect x="250" y="45" width="180" height="50" rx="6" fill="#fbe9e5" stroke="#a04030" stroke-width="1.5"/>
+  <text x="340" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#a04030" font-family="system-ui">RISK MANAGEMENT</text>
+  <text x="340" y="84" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">ISO 14971 · Runs in parallel · RMF</text>
+  <line x1="340" y1="95" x2="340" y2="115" stroke="#a04030" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+  <!-- Right: IEC 62304 -->
+  <rect x="470" y="145" width="180" height="50" rx="6" fill="#eaf0ec" stroke="#2d4a3a" stroke-width="1.5"/>
+  <text x="560" y="168" text-anchor="middle" font-size="12" font-weight="700" fill="#2d4a3a" font-family="system-ui">IEC 62304</text>
+  <text x="560" y="184" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">Software lifecycle · Sits inside DC</text>
+  <line x1="470" y1="170" x2="395" y2="170" stroke="#2d4a3a" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+  <!-- Bottom: Post-Market -->
+  <rect x="250" y="245" width="180" height="50" rx="6" fill="#e6efe9" stroke="#2d5a3d" stroke-width="1.5"/>
+  <text x="340" y="268" text-anchor="middle" font-size="12" font-weight="700" fill="#2d5a3d" font-family="system-ui">POST-MARKET SURVEILLANCE</text>
+  <text x="340" y="284" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">PMS · PMCF · PSUR · Feeds back to risk</text>
+  <line x1="340" y1="245" x2="340" y2="225" stroke="#2d5a3d" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+  <!-- Left: EU MDR -->
+  <rect x="30" y="145" width="180" height="50" rx="6" fill="#fdf6e3" stroke="#b8612b" stroke-width="1.5"/>
+  <text x="120" y="168" text-anchor="middle" font-size="12" font-weight="700" fill="#b8612b" font-family="system-ui">EU MDR / FDA</text>
+  <text x="120" y="184" text-anchor="middle" font-size="9" fill="#4a534c" font-family="system-ui">Regulatory destination · Tech Docs · NB</text>
+  <line x1="210" y1="170" x2="285" y2="170" stroke="#b8612b" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+  <!-- Corner connections -->
+  <line x1="120" y1="145" x2="280" y2="75" stroke="#d4cdbf" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="560" y1="145" x2="400" y2="75" stroke="#d4cdbf" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="120" y1="195" x2="280" y2="265" stroke="#d4cdbf" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="560" y1="195" x2="400" y2="265" stroke="#d4cdbf" stroke-width="0.8" stroke-dasharray="3,3"/>
+
+  <!-- Output box -->
+  <rect x="220" y="305" width="240" height="28" rx="4" fill="#f5f2ec" stroke="#d4cdbf" stroke-width="1"/>
+  <text x="340" y="323" text-anchor="middle" font-size="10" font-weight="600" fill="#4a534c" font-family="system-ui">OUTPUT: Technical Documentation → CE Marking / 510(k) Clearance</text>
+</svg>
+<figcaption style="text-align:center;font-size:12px;color:var(--muted);margin-top:6px;">Figure 8: Design Controls is the central hub. Risk management runs parallel. IEC 62304 sits inside for software. MDR/FDA is the destination. PMS feeds back indefinitely.</figcaption>
+</figure>
+      <h4>Acronym reference — alphabetised for drilling</h4>
+      <table class="acronym-table">
+        <thead><tr><th>Acronym</th><th>Full term &amp; one-line meaning</th></tr></thead>
+        <tbody>
+          <tr><td>CAPA</td><td>Corrective and Preventive Action — the systematic process for investigating, fixing, and preventing quality problems</td></tr>
+          <tr><td>CER</td><td>Clinical Evaluation Report — the documented procedure proving clinical safety and performance under MDR</td></tr>
+          <tr><td>DHF</td><td>Design History File — the controlled, auditable record of the entire design controls process</td></tr>
+          <tr><td>DMR</td><td>Device Master Record — the manufacturing "recipe" containing all specs and procedures</td></tr>
+          <tr><td>DHR</td><td>Device History Record — the auditable production diary for each batch or unit</td></tr>
+          <tr><td>FMEA</td><td>Failure Mode and Effects Analysis — component-level failure analysis; complements but does not replace ISO 14971</td></tr>
+          <tr><td>GSPR</td><td>General Safety and Performance Requirements — the MDR's checklist of mandatory device characteristics</td></tr>
+          <tr><td>MDR</td><td>Medical Device Regulation (EU 2017/745) — the European regulatory framework replacing MDD</td></tr>
+          <tr><td>NB</td><td>Notified Body — the third-party auditor that conducts conformity assessment for higher-risk devices</td></tr>
+          <tr><td>PMCF</td><td>Post-Market Clinical Follow-up — ongoing clinical data collection after launch</td></tr>
+          <tr><td>PRRC</td><td>Person Responsible for Regulatory Compliance — mandatory role under EU MDR</td></tr>
+          <tr><td>PSUR</td><td>Periodic Safety Update Report — mandatory recurring safety report for Class IIa+ devices</td></tr>
+          <tr><td>QMS</td><td>Quality Management System — the organisational framework (ISO 13485, FDA QSR)</td></tr>
+          <tr><td>RMF</td><td>Risk Management File — the living record of hazard analysis, controls, and residual risk</td></tr>
+          <tr><td>SOUP</td><td>Software Of Unknown Provenance — third-party libraries requiring anomaly tracking</td></tr>
+          <tr><td>SSCP</td><td>Summary of Safety and Clinical Performance — mandatory public-facing summary for implants and Class III</td></tr>
+          <tr><td>TIR45</td><td>AAMI Technical Information Report 45 — the guide for applying Agile in regulated MedTech software</td></tr>
+          <tr><td>TPLC</td><td>Total Product Life Cycle — FDA philosophy: safety extends from concept through obsolescence</td></tr>
+          <tr><td>UDI</td><td>Unique Device Identification — mandatory traceability code for every device variant</td></tr>
+          <tr><td>V&amp;V</td><td>Verification and Validation — verification = build it right; validation = build the right thing</td></tr>
+        </tbody>
+      </table>
+
+      <h4>12 concepts to lock in before Round 3</h4>
+      <ol class="concepts-list">
+        <li><strong>Design Controls sequence:</strong> Plan → Input → Output → Review → Verify → Validate → Transfer → Change → DHF.</li>
+        <li><strong>Three D-files:</strong> DHF (history), DMR (master recipe), DHR (batch record). Know all three by name.</li>
+        <li><strong>Risk Control Priority:</strong> Inherent safe design → Protective measures → Information for safety (labelling last).</li>
+        <li><strong>510(k) Equivalence:</strong> Same intended use + same tech characteristics, OR different but no new questions + as safe and effective.</li>
+        <li><strong>EU MDR Classification:</strong> I, IIa, IIb, III based on Annex VIII rules. No grandfathering for legacy devices.</li>
+        <li><strong>Software Safety Classes:</strong> A (no injury), B (non-serious), C (serious/death). Classification drives everything downstream.</li>
+        <li><strong>V&amp;V distinction:</strong> Verification = build it right (outputs vs inputs). Validation = build the right thing (device vs user needs).</li>
+        <li><strong>TPLC Philosophy:</strong> Safety is a continuum from concept through obsolescence, not just at market authorization.</li>
+        <li><strong>CER Failure Mode — Stratification Gap:</strong> Claiming broad uses without device-specific empirical data kills submissions.</li>
+        <li><strong>EU MDR Buffer Rule:</strong> Add 20–30% timeline buffer for Notified Body bottlenecks. Current reality: 13–24 months.</li>
+        <li><strong>AAMI TIR45:</strong> Layered iteration loops mapping Agile to IEC 62304. Definition of Done includes QMS compliance.</li>
+        <li><strong>FMEA ≠ ISO 14971:</strong> FMEA covers component failures; ISO 14971 requires analysis of normal-use hazards too.</li>
+      </ol>
+
+      <h4>Anti-patterns to avoid (these mark you as non-MedTech)</h4>
+      <ul>
+        <li>Treating verification and validation as synonyms. They aren't.</li>
+        <li>Saying "we tested it" instead of specifying V&amp;V scope.</li>
+        <li>Saying "we pivoted hard" — pivoting in MedTech is controlled change with risk reassessment, not vibe.</li>
+        <li>Calling design reviews "checkpoint meetings."</li>
+        <li>Promising to "move fast and break things" — the regulatory environment doesn't reward that, and signalling it disqualifies you.</li>
+        <li>Assuming risk management is something the quality team does separately. It runs in parallel and is owned cross-functionally.</li>
+        <li>Talking about labelling as a fix for a design issue. Control hierarchy puts labelling last for a reason.</li>
+      </ul>
+
+      <h4>Round-3 expert questions — drill these aloud</h4>
+      <p>Three questions from the expert-level dataset that map directly to your experience. Answer each aloud before checking the scaffold.</p>
+
+      <div class="round3-q">
+        <strong>Q1. How do you balance Agile software development with hardware stage-gate milestones?</strong>
+        <div class="quiz-block" data-quiz="6-r3-1" style="margin-top: 10px; border: none; padding: 0;">
+          <div class="quiz-a" style="display: none; margin-top: 8px;">
+            Hardware runs on stage-gate (long lead times, tooling, physical testing). Software runs on Agile (iterative, fast cycles). The integration point is AAMI TIR45: layered iteration loops map Agile sprints to IEC 62304 lifecycle processes. Hardware milestones (design freeze, verification, transfer) become the gates; software sprints feed into them. The PM coordinates the interface: software deliverables must be ready for hardware integration at each gate, and hardware changes must trigger software impact assessments. In a hybrid team, senior safety and regulatory members are embedded in sprints to prevent prototypes from failing regulatory review later.
+          </div>
+          <div class="quiz-controls">
+            <button class="quiz-reveal" data-quiz="6-r3-1">Reveal scaffold</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="round3-q">
+        <strong>Q2. How would you handle a critical supplier failure three months before launch?</strong>
+        <div class="quiz-block" data-quiz="6-r3-2" style="margin-top: 10px; border: none; padding: 0;">
+          <div class="quiz-a" style="display: none; margin-top: 8px;">
+            Immediate containment: quarantine affected inventory, assess scope of nonconformance. Activate the secondary supplier if qualified; if not, escalate to the quality agreement's change-notification clause. Document everything in the CAPA system. Assess impact on the DMR — if the supplier's component is in the DMR, any substitution requires design change control, potential re-verification, and possibly regulatory notification. The PM runs the impact assessment workstream: schedule slip, budget impact, regulatory risk, and a recovery plan with explicit decision points. If the supplier was sole-source, that's a procurement risk that should have been on the risk register from day one — the lesson is about supplier qualification depth, not just the immediate fix.
+          </div>
+          <div class="quiz-controls">
+            <button class="quiz-reveal" data-quiz="6-r3-2">Reveal scaffold</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="round3-q">
+        <strong>Q3. How do you ensure design changes maintain traceability and regulatory compliance?</strong>
+        <div class="quiz-block" data-quiz="6-r3-3" style="margin-top: 10px; border: none; padding: 0;">
+          <div class="quiz-a" style="display: none; margin-top: 8px;">
+            Every design change triggers three parallel assessments: impact on safety and effectiveness (risk management file update), impact on regulatory submission (does it require a new 510(k) or NB notification?), and impact on the traceability matrix (which inputs, outputs, V&amp;V evidence, and risk controls are affected?). The change is classified by level: Level 1 (minor, internal approval), Level 2 (moderate, requires verification), Level 3 (major, requires verification, validation, and potentially regulatory submission). The PM ensures the traceability matrix is updated in real time — not backfilled — so the DHF remains current. In a Live Traceability system, the impact assessment is instant; in spreadsheets, it's manual and error-prone. The rule: no change is implemented until the impact assessment is complete and approved.
+          </div>
+          <div class="quiz-controls">
+            <button class="quiz-reveal" data-quiz="6-r3-3">Reveal scaffold</button>
+          </div>
+        </div>
+      </div>
+
+      <h4>If asked: "what would you do in your first 90 days"</h4>
+      <div class="say-box">
+        <div class="say-label">A defensible answer</div>
+        <div class="say-quote">"First 30 days — listen mode. Read the project plan, the DHF, the RMF, the change log. Meet every cross-functional lead — engineering, regulatory, quality, clinical, manufacturing, the notified body interface. Understand the active risks and the open design changes. Don't propose anything yet. Days 30–60 — synthesis. Where are inputs ambiguous? Where is V&amp;V evidence thin? Where is the traceability matrix breaking down? What's the next stage gate and what's the gap to readiness? Days 60–90 — first interventions, surgical and consultative. One stage gate run cleanly. One change control improvement. One reporting rhythm tightened. Don't try to remake the process. Build credibility through one or two visible wins, then earn the right to propose larger changes."</div>
+      </div>
+
+      <h4>If asked: "what's the biggest difference between MedTech PM and digital/agency PM"</h4>
+      <div class="say-box">
+        <div class="say-label">A defensible answer</div>
+        <div class="say-quote">"Evidentiary discipline. In agency or pure-digital work, the artefact is the product — the page, the campaign, the launch. In MedTech the artefact is the <em>evidentiary chain</em> behind the product, because that chain is what makes the product legal to ship and safe to use. The PM's daily work is the same — scope, schedule, risk, stakeholders, change — but the standard for what counts as 'done' is much higher, and most of the work is producing artefacts that prove what you did, not just doing it."</div>
+      </div>
+
+      <div class="module-footer">
+        <span class="module-time-spent">Allow ~30 min · re-read before each round</span>
+        <button class="mark-done-btn" data-mark-mod="6">Mark module 6 complete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip" style="margin-top: 26px;">
+    <strong>One last note.</strong> This crash course is calibrated to make you <em>credible</em> in a MedTech PM round, not to make you a MedTech veteran. Veterans will spot the difference — but veterans aren't who's interviewing you for an entry into the field. The dep manager and the eventual PM round are looking for: do they recognise the territory, can they speak the language, do they understand what they don't yet know. After modules 1–6 the answer to all three is yes. That's the threshold. Don't over-engineer past it.
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 8 — ROUND-2 BRIEF
+     ============================================================ -->
+<section id="brief">
+  <h2>Round-2 brief · what to expect from the dep manager</h2>
+  <p class="lede">Read this once at the start of each session. Don't drill it. It's context, not material.</p>
+
+  <h3>What Mehdi told you</h3>
+  <p>The pipeline is: <strong>dep manager → PM who works directly with the selected person → VP</strong>. Three more rounds. The dep manager round is the first real craft test.</p>
+  <p>A successful person on the role has: <strong>good memory, good presentation skills, solid PM know-how, ability to pivot.</strong></p>
+  <p>Read each of those four for what they actually mean inside Nipro:</p>
+
+  <ul>
+    <li><strong>Good memory</strong> — fluency with project history without notes. Names, decisions, dates, stakeholders. Auditability lives in your head before the document. <em>Regulated-environment tell.</em></li>
+    <li><strong>Good presentation skills</strong> — executive readouts, steering committees, VP updates. Translating technical complexity upward. The role explicitly mentions presenting to executives.</li>
+    <li><strong>Solid PM know-how</strong> — methodology fluency. Risk register, RAID log, change control, stage gates, governance artefacts. <strong>This is the gap to close.</strong></li>
+    <li><strong>Ability to pivot</strong> — the most diagnostic. Tells you the environment is <em>not</em> clean waterfall execution. Things move. Blockers appear. Regulatory feedback loops back. The PM reroutes without losing the plot.</li>
+  </ul>
+
+  <h3>JD priority weighting (carry forward from v6)</h3>
+  <ul>
+    <li><strong>40% — Project Management Oversight.</strong> Lifecycle management, stakeholder communication, executive updates, resource allocation, risk management. Most-probed area.</li>
+    <li><strong>25% — Project Planning &amp; Execution.</strong> Plans, timelines, KPIs, governance processes (risk, resource, procurement, communication, stakeholder, quality, change management, design and development).</li>
+    <li><strong>25% — Global Change Management &amp; Process Adaptation.</strong> Best practices, methodology adoption, harmonising procedures across regions, continuous improvement.</li>
+    <li><strong>10% — Budget &amp; Financial Oversight.</strong> Budget management, cost tracking, deviation early-warning.</li>
+  </ul>
+
+  <h3>The two stories</h3>
+  <ul>
+    <li><strong>Moza Banco</strong> = regulated cross-functional governance. Lead with this for regulated-environment, stakeholder, escalation probes.</li>
+    <li><strong>Mulala</strong> = end-to-end software product ownership. Lead with this for SDLC, product owner, vendor management probes.</li>
+  </ul>
+  <p>You don't need a third primary story. Supporting references: <strong>10 Volte Meglio</strong> (programme governance under fixed deadline, distributed team), <strong>OLX/Fixeads</strong> (web↔mobile journey ownership, P&amp;L, two markets), <strong>Builders Warehouse</strong> (multi-channel rollout under Walmart compliance), <strong>Vodafone NGSME</strong> (4-country digital strategy).</p>
+
+  <h3>What you don't need to bring up</h3>
+  <ul>
+    <li><strong>Toyota improvement programme criticism.</strong> Don't volunteer. Even if true, it lands as "complains about employers."</li>
+    <li><strong>Toyota Production System depth.</strong> Don't volunteer either. Single-line CV reference is enough. Defensible answer if probed: "operational exposure plus internal e-learning track including PDCA and A3 — the discipline around problem definition before solution is the strongest takeaway."</li>
+    <li><strong>Spousal disclosure.</strong> Already handled with Mehdi internally. Don't re-raise unless asked.</li>
+  </ul>
+
+  <h3>Day-of dep manager round — final checklist</h3>
+  <ul>
+    <li>Sleep ≥ 7 hours. Skim sticky translations. No new drills.</li>
+    <li>Speak the opener aloud once, slowly. Four landing beats.</li>
+    <li>Pre-warm the voice for 5 minutes before the call (read this section aloud).</li>
+    <li>Water within reach. Pen and notebook.</li>
+    <li>Resist the urge to over-prepare. The work was the previous two weeks.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>One last thing.</strong> The dep manager interview is a craft conversation, not a stress test. They're trying to see if they'd want you in their team. The instinct to perform under that lens is exactly what makes candidates over-rehearse and sound robotic. Be the person you'd want to work with — calm, specific, honest about what you've done and what you haven't, willing to think out loud when a question doesn't fit a rehearsed answer. That's what "solid PM know-how" actually looks like to the people who recognise it.
+  </div>
+</section>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // DATA — translator pairs
+  // ============================================================
+  const translations = [
+    { id: 't1', natural: "I ran the project.", pm: "I held the workstream end-to-end as the single accountable PM.", note: "'Held' is a senior verb. 'Ran' is junior. 'End-to-end' specifies scope ownership." },
+    { id: 't2', natural: "We had meetings whenever we needed.", pm: "We ran ad-hoc steering with directed escalation, no recurring committee.", note: "Names the cadence pattern explicitly. 'Directed escalation' shows the discipline behind ad-hoc." },
+    { id: 't3', natural: "I tracked things in a spreadsheet and email.", pm: "I maintained a working tracker in spreadsheet form for the financial modelling, with email-based decision audit trail across stakeholders.", note: "'Working tracker' + 'decision audit trail' transforms 'spreadsheet and email' into governance artefacts." },
+    { id: 't4', natural: "I gave updates to my manager.", pm: "Status went verbal and email to the workstream sponsor at the agreed cadence.", note: "'Workstream sponsor' is the PM term for the senior stakeholder funding the work. 'Agreed cadence' implies a communication plan." },
+    { id: 't5', natural: "I had to escalate to my manager.", pm: "I went to lateral resolution first, then escalated vertically when the lateral path had run out.", note: "Shows escalation discipline. Reflexive escalation is junior; sequenced escalation is senior." },
+    { id: 't6', natural: "We had to deal with people from different departments.", pm: "I held the integration point across a six-function cross-functional matrix.", note: "Quantifies (six functions) and frames the PM as the integration point — the structural role, not just a participant." },
+    { id: 't7', natural: "Card Tech wasn't really helping.", pm: "I had a dependency contention with Card Technology — they weren't naturally aligned on the timeline.", note: "'Dependency contention' is the textbook term. 'Wasn't helping' is a complaint; 'dependency contention' is a problem class." },
+    { id: 't8', natural: "Pricing changed mid-way.", pm: "Pricing was challenged mid-flight and I absorbed the variation with re-modelling rather than push back. Controlled scope variation, not a failure.", note: "Names the event ('challenge'), the response ('absorbed with re-modelling'), and the framing ('controlled variation, not failure'). Three PM moves in one sentence." },
+    { id: 't9', natural: "It launched.", pm: "It shipped to general release, regulatorily approved and commercially activated.", note: "'Shipped' is the engineering verb; 'general release' is the lifecycle stage. 'Regulatorily approved + commercially activated' specifies what 'launched' actually means." },
+    { id: 't10', natural: "I designed the product.", pm: "I owned product design across four coverage categories, tier-level pricing and margin modelling, and competitive benchmarking.", note: "'Owned' replaces 'designed'. The deliverables are enumerated. This is what design means in PM register." },
+    { id: 't11', natural: "I worked with vendors.", pm: "I managed a two-vendor delivery model — design studio and engineering studio — as the integration point.", note: "Names the model. 'Integration point' is the structural role, not 'communicator' or 'liaison'." },
+    { id: 't12', natural: "I cut features to ship.", pm: "I de-scoped non-critical features under cost constraint to ship to v1 — that's the right PM call when unit economics are tight.", note: "Frames cutting as 'de-scoping under constraint'. Ends by owning the call: 'right PM call'." },
+    { id: 't13', natural: "We did weekly meetings.", pm: "Cadence was weekly check-ins against a written backlog, with feature acceptance against the spec.", note: "'Cadence' + 'against a written backlog' + 'feature acceptance against spec' is the textbook iterative-delivery sentence." },
+    { id: 't14', natural: "It didn't really work out.", pm: "Bounded experiment, contained downside, lessons retained.", note: "Verbatim. Senior framing for a discontinued initiative. Never say 'it failed'." },
+    { id: 't15', natural: "I wrote down what to build.", pm: "I produced product specs, wireframes, and a backlog the engineering studio worked from.", note: "Three deliverables named. PM register treats artefacts as named objects, not generic 'documents'." },
+    { id: 't16', natural: "I made decisions about features.", pm: "Feature prioritisation and sequencing were on me, against the budget envelope.", note: "'Prioritisation and sequencing' (not just prioritisation). 'Budget envelope' frames the constraint." },
+    { id: 't17', natural: "We didn't really do Scrum.", pm: "We didn't run formal Scrum ceremonies. Iterative in shape, lighter on ritual than a regulated environment would require.", note: "Don't pretend you ran Scrum. This phrasing is honest and shows you understand what Scrum actually requires." },
+    { id: 't18', natural: "I tried to sell it to Unitel.", pm: "I ran a structured B2B distribution outreach — brand partnership pitch first, escalated to a licensing offer covering all Unitel markets when the partnership stalled.", note: "Names the two-stage structure (partnership → licensing). 'Structured B2B distribution outreach' frames the work as a deliberate strategy, not a sales pitch." },
+    { id: 't19', natural: "I closed it down.", pm: "Active development stopped after the launch cycle rather than fund another round from my own budget — controlled fade, not a formal kill.", note: "More honest framing. 'Controlled fade' acknowledges the brand persisted socially while active dev stopped — matches what actually happened." },
+    { id: 't20', natural: "We had a budget.", pm: "I owned the budget envelope and tracked deviation against the working tracker.", note: "'Budget envelope' + 'deviation tracking' is the financial-oversight phrase Nipro will recognise." },
+    { id: 't21', natural: "I did some research on competitors.", pm: "I led primary competitive benchmarking against the two named incumbents — direct comparison across coverage categories and pricing.", note: "'Primary' (not secondary). 'Named incumbents' (not 'competitors'). 'Direct comparison across categories and pricing' = the deliverable shape." },
+    { id: 't22', natural: "I had to convince stakeholders.", pm: "Stakeholder alignment was achieved through directed engagement on the dependencies they actually owned.", note: "'Directed engagement on owned dependencies' is the senior phrasing. 'Convince' suggests salesmanship; 'aligned on owned dependencies' suggests structure." },
+    { id: 't23', natural: "There were a lot of risks.", pm: "I maintained a risk register with mitigation owners assigned by function.", note: "Risk register is the PM artefact. 'Mitigation owners assigned by function' shows the discipline behind the artefact." },
+    { id: 't24', natural: "It was complicated.", pm: "The interface complexity was high — multiple regulated functions, parallel decisions, fixed deadline.", note: "'Complicated' is vague. 'Interface complexity' + the three drivers (functions, parallel decisions, deadline) is specific." },
+    { id: 't25', natural: "I made sure things got done.", pm: "I held the delivery surface across functions and surfaced blockers early to the workstream sponsor.", note: "'Delivery surface' + 'surfaced blockers early' is the executional half of PM. 'Made sure things got done' is what a junior would say." },
+    { id: 't26', natural: "We had different priorities.", pm: "Functional priorities were misaligned — Card Tech's roadmap didn't carry our integration as P0.", note: "Names the conflict in PM register: 'functional priorities misaligned', 'P0' (priority zero), and the specific consequence." },
+    { id: 't27', natural: "I got buy-in.", pm: "I secured stakeholder commitment at the function level before the steering review.", note: "'Secured commitment at the function level' is more specific than 'buy-in'. 'Before the steering review' implies governance sequencing." },
+    { id: 't28', natural: "I changed the plan.", pm: "I re-baselined the schedule when scope variation was approved.", note: "'Re-baselined' is the PM term for changing the plan officially. Implies a baseline existed in the first place — which is the senior signal." },
+    { id: 't29', natural: "It went well.", pm: "Delivery held to the original quality bar with controlled scope variation absorbed.", note: "'Held to the quality bar' is the verb. 'Controlled scope variation absorbed' specifies what 'well' actually means." },
+    { id: 't30', natural: "It was a hard project.", pm: "It was a high-interface, fixed-deadline workstream with parallel regulated dependencies.", note: "Names the difficulty class. 'Hard' is feeling-language; 'high-interface, fixed-deadline, parallel regulated dependencies' is structure-language." },
+    { id: 't31', natural: "I learned a lot.", pm: "The lessons were specific — pricing under regulatory constraint requires earlier engagement with Compliance; vendor backlog hygiene matters more than ceremony.", note: "Generic learning is junior. Naming two specific lessons with structural context is senior." },
+    { id: 't32', natural: "I'm good with stakeholders.", pm: "I work the stakeholder map function-by-function; commitments get tracked against deliverables, not promises.", note: "'Stakeholder map' is the artefact. 'Tracked against deliverables, not promises' is the discipline." },
+    { id: 't33', natural: "I keep things on track.", pm: "I run the schedule against a baseline with variance reviewed at the agreed cadence.", note: "'Schedule against baseline' + 'variance reviewed at cadence' is what 'on track' means in PM register." }
+  ];
+
+  // ============================================================
+  // DATA — question drill
+  // ============================================================
+  const drillQuestions = [
+    {
+      id: 'q1',
+      category: 'oversight',
+      question: "Walk me through how you manage a complex programme through its lifecycle.",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> Moza Banco (3-week regulated workstream) or Mulala (SDLC end-to-end). Pick the one that fits the framing.</div>
+        <ul>
+          <li><strong>Initiation</strong> — workstream sponsor, scope definition, stakeholder map across functions</li>
+          <li><strong>Planning</strong> — written tracker (spreadsheet), risk register, dependency mapping, governance cadence agreed up front</li>
+          <li><strong>Execution</strong> — ad-hoc steering with directed escalation OR recurring committee depending on shape; email-based decision audit trail; lateral resolution first then vertical</li>
+          <li><strong>Change control</strong> — scope variations re-baselined explicitly; sponsor sign-off; nothing happens implicitly</li>
+          <li><strong>Closure</strong> — general release; lessons retained; handover documentation if applicable</li>
+        </ul>`
+    },
+    {
+      id: 'q2',
+      category: 'oversight',
+      question: "How do you handle stakeholder communication across cross-functional teams?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> Moza six-function matrix (Risk, Compliance, Legal, Card Tech, IT, Finance).</div>
+        <ul>
+          <li>Stakeholder map function-by-function with committed dependencies named</li>
+          <li>Cadence calibrated to function — daily for delivery-critical, weekly for support functions, ad-hoc with directed escalation for slow movers</li>
+          <li>Decision audit trail in email for everything that needs sign-off; verbal updates for sponsor</li>
+          <li>Escalation only after lateral resolution has run out</li>
+          <li>Status reports framed as <em>commitments tracked, deviations flagged, decisions needed</em> — not narrative</li>
+        </ul>`
+    },
+    {
+      id: 'q3',
+      category: 'oversight',
+      question: "Describe a time you had to deliver an executive update that had to land cleanly.",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> Moza pricing re-modelling decision OR 10VM steering with 202 Strategies.</div>
+        <ul>
+          <li>Frame the audience first — what does the executive need to act on?</li>
+          <li>Open with the decision needed (or "no decision needed, status only")</li>
+          <li>One slide / one paragraph for context, one for status, one for what's next</li>
+          <li>Don't volunteer detail; have the detail ready if probed</li>
+          <li>Don't bury the issue — surface bad news early in the update, not at the end</li>
+        </ul>`
+    },
+    {
+      id: 'q4',
+      category: 'planning',
+      question: "How do you build a project plan from scratch when the brief is verbal?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> Moza credit card insurance — verbal brief, three weeks, six functions.</div>
+        <ul>
+          <li>Capture the brief in writing yourself; circulate for sponsor confirmation before starting</li>
+          <li>Decompose into deliverables with named owners</li>
+          <li>Map dependencies between deliverables — that gives you the sequencing</li>
+          <li>Backwards-plan from the deadline; identify the critical path</li>
+          <li>Risk register against the plan — what could break the critical path?</li>
+          <li>Governance cadence agreed up front; executive update shape agreed up front</li>
+        </ul>`
+    },
+    {
+      id: 'q5',
+      category: 'planning',
+      question: "How do you set KPIs for a programme like this one?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> JD names "key project performance indicators (KPIs) to monitor project health and success." Frame around <em>delivery health</em> + <em>outcome health</em>.</div>
+        <ul>
+          <li><strong>Delivery health KPIs:</strong> schedule variance, scope variance, budget variance, dependency-blockers-open, decisions-pending</li>
+          <li><strong>Outcome health KPIs:</strong> tied to the value proposition — adoption, time-to-value, defect rate post-release, regulatory compliance status</li>
+          <li>Two of each, not twelve. Twelve KPIs is no KPIs.</li>
+          <li>Reviewed at agreed cadence; deviations trigger structured response, not panic</li>
+          <li>For digital ecosystem: connectivity reliability, data integrity, security incidents — Nipro-specific overlay</li>
+        </ul>`
+    },
+    {
+      id: 'q6',
+      category: 'planning',
+      question: "How do you define and track the budget for a complex digital programme?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> 10VM ($300K Facebook spend, 25 days, fixed deadline) + Mulala (self-funded budget envelope).</div>
+        <ul>
+          <li>Budget envelope agreed at initiation, broken down by workstream</li>
+          <li>Tracker maintained against the envelope — actual vs forecast, weekly</li>
+          <li>Deviation early-warning at 10% — sponsor flagged before it becomes a problem</li>
+          <li>Procurement compliance where vendor spend is involved (Walmart TPI experience)</li>
+          <li>Strategic input on resource allocation — when to fund acceleration, when to cut scope rather than expand budget</li>
+        </ul>`
+    },
+    {
+      id: 'q7',
+      category: 'change',
+      question: "How do you handle scope change mid-flight in a regulated environment?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> Moza pricing challenge mid-flight, re-modelled rather than push back.</div>
+        <ul>
+          <li>Change request captured in writing — what's changing, why, what's the impact on schedule/scope/budget</li>
+          <li>Impact assessment across functions — who's affected, what re-work is needed</li>
+          <li>Sponsor sign-off before re-baselining — nothing changes implicitly</li>
+          <li>Re-baseline schedule and tracker; communicate the new baseline to all stakeholders</li>
+          <li>Document the change in the decision audit trail — auditability matters in regulated</li>
+          <li>"Controlled scope variation, not a failure" — that's the framing</li>
+        </ul>`
+    },
+    {
+      id: 'q8',
+      category: 'change',
+      question: "How do you drive adoption of a new process across a global team?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> JD explicitly names "lead change management strategies to ensure successful adoption of new processes and tools across global teams." This is 25% of the role.</div>
+        <ul>
+          <li>Start with the <em>why</em> — what problem does the new process solve for the people adopting it?</li>
+          <li>Co-design with regional leads, not just impose — adoption follows ownership</li>
+          <li>Pilot in one region first; iterate based on feedback before global rollout</li>
+          <li>Training, documentation, and named champions per region</li>
+          <li>Measure adoption (not just rollout) — usage data, feedback loops, exception tracking</li>
+          <li>Continuous improvement — the process you launch is not the process you run in 6 months</li>
+        </ul>`
+    },
+    {
+      id: 'q9',
+      category: 'change',
+      question: "Describe a time you had to pivot mid-project. What did you do?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> Mulala distribution outreach (post-launch pivot from organic acquisition to B2B distribution — Zap Angola, then Unitel partnership escalating to licensing) OR Moza pricing re-modelling.</div>
+        <ul>
+          <li>Name the trigger — what told you the original plan wouldn't work?</li>
+          <li>Assess options before deciding — pivot, persevere, kill</li>
+          <li>Decision criteria — cost, schedule, strategic fit, downside</li>
+          <li>Execute the pivot decisively once decided — slow decisions, fast execution</li>
+          <li>Communicate the pivot to stakeholders with the rationale, not just the new plan</li>
+          <li>"The lesson was about commercial validation before scaling, not about delivery" — that's a senior reframe</li>
+        </ul>`
+    },
+    {
+      id: 'q10',
+      category: 'oversight',
+      question: "How do you manage risk across a portfolio of interconnected projects?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> JD explicitly mentions "implement risk management plans and mitigate risks across digital ecosystem projects" + "maintain a proactive approach."</div>
+        <ul>
+          <li>Risk register at portfolio level, not just per project</li>
+          <li>Cross-project dependencies tracked separately — that's where most risk hides</li>
+          <li>Each risk has: owner, likelihood, impact, mitigation, status</li>
+          <li>Proactive review — risk register is a living document, reviewed at cadence</li>
+          <li>Risk appetite agreed with sponsor — not all risks need full mitigation</li>
+          <li>Cybersecurity, regulatory, and dependency risks are separate columns in regulated MedTech</li>
+        </ul>`
+    },
+    {
+      id: 'q11',
+      category: 'oversight',
+      question: "How do you manage and mentor a project team?",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> Teleperformance team lead (15–20 agents, Meta AR/VR support) + Moza colleague + Crossmedia distributed teams.</div>
+        <ul>
+          <li>Clarity first — clear deliverables, clear ownership, clear escalation path</li>
+          <li>Coaching cadence — 1:1s with named focus, not just status</li>
+          <li>Surface blockers proactively, don't wait for the team to flag them</li>
+          <li>Recognise the work in writing — not just verbal</li>
+          <li>Structured corrective action when needed — quality governance, not personal</li>
+          <li>Mentorship is medium-term — invest in the people who'll outlast the project</li>
+        </ul>`
+    },
+    {
+      id: 'q12',
+      category: 'budget',
+      question: "Tell me about a time the budget was tight and you had to make a hard call.",
+      scaffold: `<div class="anchor"><strong>Anchor:</strong> Mulala video de-scope OR Builders Warehouse multi-channel rollout under R100K ZAR/year envelope.</div>
+        <ul>
+          <li>Frame the constraint — what was the envelope, what was the pressure?</li>
+          <li>Options considered — cut scope, expand budget, extend timeline, accept lower quality</li>
+          <li>Decision criteria applied — strategic fit, downside, recoverability</li>
+          <li>The call made — own it, name it, don't hedge</li>
+          <li>What it produced — outcome, learning</li>
+          <li>"That's the right PM call when unit economics are tight" — verbatim phrase if it fits</li>
+        </ul>`
+    }
+  ];
+
+  // ============================================================
+  // STATE — localStorage backed
+  // ============================================================
+  const STORAGE_KEY = 'nipro_v7_state_v1';
+
+  function loadState() {
+    const defaults = {
+      sessions: 0,
+      totalReps: 0,
+      lastSession: null,
+      currentSessionStart: null,
+      currentSessionReps: 0,
+      translations: {},
+      stars: { moza: { mark: null, reps: 0 }, mulala: { mark: null, reps: 0 } },
+      drillReps: {},
+      medtechModules: {},
+      medtechQuizzes: {}
+    };
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // Merge — defensively backfill any missing keys from older state shapes
+        return Object.assign({}, defaults, parsed, {
+          medtechModules: parsed.medtechModules || {},
+          medtechQuizzes: parsed.medtechQuizzes || {}
+        });
+      }
+    } catch (e) {}
+    return defaults;
+  }
+
+  let state = loadState();
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.warn('localStorage unavailable; progress will not persist.');
+    }
+  }
+
+  function ensureSession() {
+    if (!state.currentSessionStart) {
+      state.currentSessionStart = Date.now();
+      state.currentSessionReps = 0;
+      state.sessions += 1;
+      saveState();
+    }
+  }
+
+  function bumpRep() {
+    ensureSession();
+    state.totalReps += 1;
+    state.currentSessionReps += 1;
+    saveState();
+    renderTracker();
+  }
+
+  window.endSession = function() {
+    if (state.currentSessionStart) {
+      state.lastSession = new Date().toISOString();
+      state.currentSessionStart = null;
+      state.currentSessionReps = 0;
+      saveState();
+      renderTracker();
+    }
+  };
+
+  window.resetProgress = function() {
+    if (confirm('Reset all progress? This clears translation marks, STAR recall counts, drill reps, and session history. Cannot be undone.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      state = loadState();
+      renderAll();
+    }
+  };
+
+  // ============================================================
+  // RENDER — tracker
+  // ============================================================
+  function renderTracker() {
+    document.getElementById('t-sessions').textContent = state.sessions;
+    document.getElementById('t-reps').textContent = state.totalReps;
+
+    const goodCount = Object.values(state.translations).filter(t => t.mark === 'good').length;
+    document.getElementById('t-good').textContent = `${goodCount}/${translations.length}`;
+    const goodEl = document.getElementById('t-good');
+    if (goodCount === translations.length && translations.length > 0) goodEl.className = 'stat-value good';
+    else if (goodCount > 0) goodEl.className = 'stat-value';
+    else goodEl.className = 'stat-value warn';
+
+    const starGood = (state.stars.moza.mark === 'good' ? 1 : 0) + (state.stars.mulala.mark === 'good' ? 1 : 0);
+    document.getElementById('t-stars').textContent = `${starGood}/2`;
+    const starsEl = document.getElementById('t-stars');
+    if (starGood === 2) starsEl.className = 'stat-value good';
+    else if (starGood === 1) starsEl.className = 'stat-value';
+    else starsEl.className = 'stat-value warn';
+
+    if (state.lastSession) {
+      const d = new Date(state.lastSession);
+      const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+      document.getElementById('t-last').textContent = days === 0 ? 'today' : days === 1 ? 'yesterday' : `${days}d ago`;
+    } else {
+      document.getElementById('t-last').textContent = 'never';
+    }
+
+    // Tab chips
+    const chip = document.getElementById('chip-translator');
+    chip.textContent = `${goodCount}/${translations.length}`;
+    chip.className = goodCount === translations.length ? 'chip' : 'chip zero';
+
+    const drillDone = Object.keys(state.drillReps).filter(k => state.drillReps[k] > 0).length;
+    const drillChip = document.getElementById('chip-drill');
+    drillChip.textContent = `${drillDone}/${drillQuestions.length}`;
+    drillChip.className = drillDone === drillQuestions.length && drillQuestions.length > 0 ? 'chip' : 'chip zero';
+
+    // STAR rep counters
+    document.getElementById('reps-moza').textContent = state.stars.moza.reps;
+    document.getElementById('reps-mulala').textContent = state.stars.mulala.reps;
+  }
+
+  // ============================================================
+  // RENDER — translator
+  // ============================================================
+  function renderTranslator() {
+    const list = document.getElementById('translator-list');
+    list.innerHTML = '';
+    const filter = document.querySelector('.drill-controls .filter-btn.active')?.dataset.filter || 'all';
+    const search = document.getElementById('translator-search').value.toLowerCase().trim();
+
+    let visible = 0;
+    translations.forEach(t => {
+      const tState = state.translations[t.id] || { mark: null, reps: 0 };
+      // Filter
+      if (filter === 'unmarked' && tState.mark !== null) return;
+      if (filter === 'shaky' && tState.mark !== 'shaky' && tState.mark !== 'bad') return;
+      if (filter === 'good' && tState.mark !== 'good') return;
+      // Search
+      if (search) {
+        const hay = (t.natural + ' ' + t.pm + ' ' + (t.note || '')).toLowerCase();
+        if (!hay.includes(search)) return;
+      }
+      visible++;
+
+      const card = document.createElement('div');
+      card.className = 'translator-card';
+      if (tState.mark) card.classList.add('marked-' + tState.mark);
+
+      const isRevealed = tState._revealed === true;
+
+      card.innerHTML = `
+        <div class="translator-natural">
+          <div class="label">Your natural phrasing</div>
+          <div class="text">${escapeHtml(t.natural)}</div>
+        </div>
+        <div class="translator-pm ${isRevealed ? '' : 'hidden'}">
+          <div class="label">PM register</div>
+          <div class="text">${escapeHtml(t.pm)}</div>
+          ${t.note ? `<div class="note">${escapeHtml(t.note)}</div>` : ''}
+        </div>
+        <div class="translator-actions">
+          <button class="reveal-btn ${isRevealed ? 'revealed' : ''}" data-id="${t.id}">${isRevealed ? 'Hide' : 'Reveal PM register'}</button>
+          <button class="mark-btn good ${tState.mark === 'good' ? 'active' : ''}" data-id="${t.id}" data-mark="good">✓ Sticky</button>
+          <button class="mark-btn shaky ${tState.mark === 'shaky' ? 'active' : ''}" data-id="${t.id}" data-mark="shaky">~ Shaky</button>
+          <button class="mark-btn bad ${tState.mark === 'bad' ? 'active' : ''}" data-id="${t.id}" data-mark="bad">✗ Stuck</button>
+          <span class="reps">Reps: <strong>${tState.reps}</strong></span>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+
+    if (visible === 0) {
+      list.innerHTML = '<div style="padding: 30px; text-align: center; color: var(--muted); font-size: 14px;">No translations match the current filter or search.</div>';
+    }
+
+    // Wire up
+    list.querySelectorAll('.reveal-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = btn.dataset.id;
+        if (!state.translations[id]) state.translations[id] = { mark: null, reps: 0 };
+        const tState = state.translations[id];
+        tState._revealed = !tState._revealed;
+        if (tState._revealed) {
+          tState.reps += 1;
+          bumpRep();
+        }
+        saveState();
+        renderTranslator();
+        renderTracker();
+      });
+    });
+    list.querySelectorAll('.mark-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = btn.dataset.id;
+        const mark = btn.dataset.mark;
+        if (!state.translations[id]) state.translations[id] = { mark: null, reps: 0 };
+        const tState = state.translations[id];
+        tState.mark = tState.mark === mark ? null : mark;
+        saveState();
+        renderTranslator();
+        renderTracker();
+      });
+    });
+  }
+
+  // ============================================================
+  // RENDER — drill
+  // ============================================================
+  function renderDrill() {
+    const list = document.getElementById('drill-list');
+    list.innerHTML = '';
+    const filter = document.querySelector('#drill .drill-controls .filter-btn.active')?.dataset.drillFilter || 'all';
+    const search = document.getElementById('drill-search').value.toLowerCase().trim();
+
+    let visible = 0;
+    drillQuestions.forEach(q => {
+      if (filter !== 'all' && q.category !== filter) return;
+      if (search) {
+        const hay = (q.question + ' ' + q.scaffold).toLowerCase();
+        if (!hay.includes(search)) return;
+      }
+      visible++;
+      const reps = state.drillReps[q.id] || 0;
+      const isRevealed = state['_drill_rev_' + q.id] === true;
+
+      const weightLabel = {
+        oversight: '40% PM Oversight',
+        planning: '25% Planning',
+        change: '25% Change Mgmt',
+        budget: '10% Budget'
+      }[q.category];
+
+      const card = document.createElement('div');
+      card.className = 'qd-card';
+      card.innerHTML = `
+        <div class="qd-question">${escapeHtml(q.question)}<span class="qd-weight">${weightLabel}</span></div>
+        <div class="qd-scaffold ${isRevealed ? '' : 'hidden'}">${q.scaffold}</div>
+        <div class="qd-actions">
+          <button class="reveal-btn ${isRevealed ? 'revealed' : ''}" data-id="${q.id}">${isRevealed ? 'Hide scaffold' : 'Reveal scaffold'}</button>
+          <span class="reps">Reps: <strong>${reps}</strong></span>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+
+    if (visible === 0) {
+      list.innerHTML = '<div style="padding: 30px; text-align: center; color: var(--muted); font-size: 14px;">No questions match the current filter.</div>';
+    }
+
+    list.querySelectorAll('.reveal-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = btn.dataset.id;
+        const key = '_drill_rev_' + id;
+        state[key] = !state[key];
+        if (state[key]) {
+          state.drillReps[id] = (state.drillReps[id] || 0) + 1;
+          bumpRep();
+        }
+        saveState();
+        renderDrill();
+        renderTracker();
+      });
+    });
+  }
+
+  // ============================================================
+  // RENDER — STAR
+  // ============================================================
+  function wireStarCards() {
+    document.querySelectorAll('.recall-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        const card = document.getElementById(target);
+        const blocks = card.querySelectorAll('.recall-hide');
+        const isHidden = blocks[0].classList.contains('hidden');
+        blocks.forEach(b => b.classList.toggle('hidden', !isHidden));
+        btn.textContent = isHidden ? 'Hide Action & Result' : 'Reveal Action & Result';
+        btn.classList.toggle('revealed', isHidden);
+        if (isHidden) {
+          // counts as a rep
+          const starKey = target.replace('-star', '');
+          state.stars[starKey].reps += 1;
+          bumpRep();
+          saveState();
+          renderTracker();
+        }
+      });
+    });
+    document.querySelectorAll('.star-mark').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const star = btn.dataset.star;
+        const mark = btn.dataset.mark;
+        state.stars[star].mark = state.stars[star].mark === mark ? null : mark;
+        // toggle UI
+        const siblings = btn.parentNode.querySelectorAll('.star-mark');
+        siblings.forEach(s => s.classList.remove('active'));
+        if (state.stars[star].mark) btn.classList.add('active');
+        saveState();
+        renderTracker();
+      });
+    });
+  }
+
+  // ============================================================
+  // MEDTECH CRASH COURSE
+  // ============================================================
+  function renderMedtech() {
+    // Render module open/done state
+    document.querySelectorAll('#medtech .module').forEach(modEl => {
+      const modId = modEl.id.replace('mod-', '');
+      const m = state.medtechModules[modId] || {};
+      modEl.classList.toggle('done', !!m.done);
+      modEl.classList.toggle('open', !!m.opened);
+      const toggleEl = modEl.querySelector('.module-toggle');
+      if (toggleEl) toggleEl.textContent = m.opened ? '−' : '+';
+    });
+
+    // Render quiz revealed state
+    document.querySelectorAll('#medtech .quiz-block').forEach(qEl => {
+      const qid = qEl.dataset.quiz;
+      qEl.classList.toggle('revealed', !!state.medtechQuizzes[qid]);
+      const btn = qEl.querySelector('.quiz-reveal');
+      if (btn) btn.textContent = state.medtechQuizzes[qid] ? 'Hide' : 'Reveal';
+    });
+
+    // Progress bar + chip
+    const total = 6;
+    const done = Object.values(state.medtechModules).filter(m => m && m.done).length;
+    const pct = Math.round((done / total) * 100);
+    const bar = document.getElementById('medtech-progress');
+    const txt = document.getElementById('medtech-progress-text');
+    if (bar) bar.style.width = pct + '%';
+    if (txt) txt.textContent = `${done} of ${total} modules complete`;
+    const chip = document.getElementById('chip-medtech');
+    if (chip) {
+      chip.textContent = `${done}/${total}`;
+      chip.classList.toggle('zero', done === 0);
+    }
+  }
+
+  function wireMedtech() {
+    // Module collapse/expand on header click
+    document.querySelectorAll('#medtech .module-header').forEach(headerEl => {
+      headerEl.addEventListener('click', (e) => {
+        // Don't toggle if clicking the mark-done button (handled elsewhere)
+        if (e.target.closest('.mark-done-btn')) return;
+        const modId = headerEl.dataset.mod;
+        if (!state.medtechModules[modId]) state.medtechModules[modId] = {};
+        state.medtechModules[modId].opened = !state.medtechModules[modId].opened;
+        saveState();
+        renderMedtech();
+      });
+    });
+
+    // Quiz reveal/hide
+    document.querySelectorAll('#medtech .quiz-reveal').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const qid = btn.dataset.quiz;
+        state.medtechQuizzes[qid] = !state.medtechQuizzes[qid];
+        saveState();
+        renderMedtech();
+      });
+    });
+
+    // Mark-done buttons
+    document.querySelectorAll('#medtech .mark-done-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const modId = btn.dataset.markMod;
+        if (!state.medtechModules[modId]) state.medtechModules[modId] = {};
+        state.medtechModules[modId].done = !state.medtechModules[modId].done;
+        saveState();
+        renderMedtech();
+      });
+    });
+  }
+
+  // ============================================================
+  // TABS
+  // ============================================================
+  function wireTabs() {
+    document.querySelectorAll('nav.tabs button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  }
+
+  // ============================================================
+  // FILTER & SEARCH WIRING
+  // ============================================================
+  function wireFilters() {
+    document.querySelectorAll('#translator .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#translator .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderTranslator();
+      });
+    });
+    document.getElementById('translator-search').addEventListener('input', () => renderTranslator());
+
+    document.querySelectorAll('#drill .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#drill .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderDrill();
+      });
+    });
+    document.getElementById('drill-search').addEventListener('input', () => renderDrill());
+  }
+
+  // ============================================================
+  // UTIL
+  // ============================================================
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderAll() {
+    renderTracker();
+    renderTranslator();
+    renderDrill();
+    renderMedtech();
+  }
+
+  // ============================================================
+  // INIT
+  // ============================================================
+  wireTabs();
+  wireFilters();
+  wireStarCards();
+  wireMedtech();
+  renderAll();
+
+  // End session automatically if user closes the tab
+  window.addEventListener('beforeunload', () => {
+    if (state.currentSessionStart) {
+      state.lastSession = new Date().toISOString();
+      state.currentSessionStart = null;
+      saveState();
+    }
+  });
+})();
+</script>
+</body>
+</html>

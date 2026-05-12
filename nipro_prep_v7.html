@@ -323,6 +323,16 @@
   .translator-actions .reps strong { color: var(--forest); font-size: 13px; }
 
   /* STAR story cards */
+  .star-section-heading {
+    color: var(--forest);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 28px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--rule);
+  }
   .star-card {
     background: white;
     border: 1px solid var(--rule);
@@ -1080,8 +1090,8 @@
      SECTION 3 — MOZA STAR
      ============================================================ -->
 <section id="moza">
-  <h2>STAR · Moza Banco insurance product</h2>
-  <p class="lede">Regulated banking · cross-functional governance · escalation discipline. The story to lead with when the dep manager asks about regulated environments or stakeholder management.</p>
+  <h2>STAR · Moza Banco</h2>
+  <p class="lede">Two stories from the 2015–2016 Moza tenure, used for different probes. <strong>PreBank mobile banking app</strong> — sole product ownership of a greenfield, board-sponsored digital product, vision through demo, in under three months. Lead with this for product-ownership, greenfield-delivery, or executive-sponsor probes. <strong>Credit card insurance product</strong> — six-function cross-functional matrix in a regulated environment, three-week verbal brief. Lead with this for regulated-environment, stakeholder-management, or escalation-discipline probes.</p>
 
       <div class="video-embed-block">
         <div class="video-label">📺 Video companion — STAR Stories: Moza & Mulala</div>
@@ -1093,6 +1103,56 @@
         </div>
       </div>
 
+
+  <h3 class="star-section-heading">Primary STAR · Product ownership</h3>
+
+  <div class="star-card" id="prebank-star">
+    <div class="star-card-header">
+      <h3>PreBank mobile banking app · 2015–2016</h3>
+      <div class="subtitle">Moza Banco · Maputo · Under 3 months kickoff to demo · Sole product lead · Board-sponsored greenfield</div>
+    </div>
+    <div class="star-card-body">
+      <div class="star-block">
+        <div class="star-label">Situation</div>
+        <div class="star-text">PreBank was one of several products in flight at Moza Banco during my 2015–2016 tenure. It was a <strong>greenfield mobile banking initiative</strong> — completely independent from the bank's existing public channels (USSD, branch, internet banking). Sponsored at administration level as a parallel digital track. <strong>Internal IT was not in the loop by design</strong> — the bank's IT capacity was committed to the legacy-channel roadmap, and the board wanted to de-risk a new product concept before drawing on that capacity.</div>
+      </div>
+      <div class="star-block">
+        <div class="star-label">Task</div>
+        <div class="star-text"><strong>Sole product lead.</strong> Vision, requirements, vendor selection and coordination, and demo-stage delivery — accountable directly to the executive sponsor on the administration board. Mandate was <strong>demo-ready in under three months</strong>, so the board could decide whether to commit production budget.</div>
+      </div>
+      <div class="star-block hidden recall-hide">
+        <div class="star-label">Action</div>
+        <div class="star-text">Defined product scope, customer flows, and admin interface requirements. Engaged an <strong>external Portuguese mobile development studio</strong> for <strong>native iOS, native Android, and Windows Phone</strong> builds, with a web admin interface for bank-side operations. Ran coordination across <strong>four functions</strong>: external dev vendor (technical delivery), executive sponsor (board reporting and scope decisions), Compliance/Risk/Legal (regulatory and customer-data framework), and Marketing/Commercial (positioning and launch readiness). <strong>Scoped deliberately to demo-first</strong> — core flows demonstrable, not production-hardened — so the board could see and decide before committing full production budget. Total demo-stage spend held <strong>under $50K USD</strong>.</div>
+      </div>
+      <div class="star-block hidden recall-hide">
+        <div class="star-label">Result</div>
+        <div class="star-text">Demo delivered on schedule and presented to administration. Three native platform builds plus admin interface, all demonstrable. <strong>Board sign-off on the product concept</strong>; full production scope was deferred into the bank's longer-term digital roadmap as priorities shifted and capacity was reallocated. The <strong>demo-first scoping decision</strong> is the part I'd repeat — it converted a "should we build a mobile bank?" debate into a "should we scale this build?" decision, which is a more productive question for a board to answer.</div>
+      </div>
+      <div class="star-recall-controls">
+        <button class="recall-btn" data-target="prebank-star">Reveal Action &amp; Result</button>
+        <button class="star-mark good" data-mark="good" data-star="prebank">✓ Clean recall</button>
+        <button class="star-mark shaky" data-mark="shaky" data-star="prebank">~ Got most</button>
+        <button class="star-mark bad" data-mark="bad" data-star="prebank">✗ Stalled</button>
+        <span class="reps">Reps: <strong id="reps-prebank">0</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>Why this story works for Nipro.</strong> Greenfield product ownership from vision to demo, under fixed deadline, with regulated-environment cross-functional coordination and direct executive-sponsor accountability. The <strong>four-function coordination shape</strong> (dev vendor, exec sponsor, Compliance/Risk/Legal, Marketing/Commercial) and the <strong>demo-first scoping decision</strong> both map directly to a digital-ecosystem PM running parallel products at different lifecycle stages with regulatory dependencies on critical path. <strong>Lead with this for product-ownership, greenfield, or executive-sponsor probes.</strong>
+  </div>
+
+  <div class="warn">
+    <strong>Three probes to be ready for.</strong>
+    <br><br>
+    <strong>"Under $50K for three native platforms in three months — what was the scope really?"</strong> Demo-stage, deliberately scoped. Core customer flows demonstrable on each platform, admin interface for bank-side operations. Not production-hardened, no core-banking integration, no production data, no scaling tested. That's exactly what the production-phase scoping would have addressed if the board had committed the budget. The point of the demo was to convert a strategic debate into a budget decision.
+    <br><br>
+    <strong>"IT not in the loop sounds like shadow IT — what about data security and core banking integration?"</strong> Demo-stage build, no production data, no integration with core banking. Compliance/Risk/Legal was embedded throughout to frame the customer-data and regulatory model for the eventual production scope. The "IT not in the loop" decision was a board-level call about <em>where to put capacity</em>, not a governance gap. Production scope would have brought IT in formally before any production data touched the system.
+    <br><br>
+    <strong>"What happened after demo?"</strong> Honest: scope was deferred into the bank's longer-term digital roadmap. Board priorities shifted, capacity was reallocated. I left Moza in August 2016 before any subsequent production decision was taken. The demo did its job — it gave the board a tangible artefact to decide against. Deferral isn't failure when the deferral is itself the decision the demo enabled.
+  </div>
+
+  <h3 class="star-section-heading">Secondary STAR · Cross-functional governance</h3>
 
   <div class="star-card" id="moza-star">
     <div class="star-card-header">
@@ -1106,7 +1166,7 @@
       </div>
       <div class="star-block">
         <div class="star-label">Task</div>
-        <div class="star-text">I owned the workstream end-to-end: <strong>product design across four coverage categories</strong> (death and permanent invalidity, funeral assistance, travel insurance, hospitalisation), tier-level pricing and margin modelling, competitive benchmarking against the two incumbent providers (Global, Tranquilidade), and cross-functional sign-off across Risk, Compliance, Legal, Card Technology, IT, and Finance. One direct colleague worked alongside me on benchmarking and design.</div>
+        <div class="star-text">I owned the workstream end-to-end: <strong>product design across four coverage categories</strong> (death and permanent invalidity, funeral assistance, travel insurance, hospitalisation), tier-level pricing and margin modelling, competitive benchmarking against the <strong>two incumbent providers in the market</strong>, and cross-functional sign-off across Risk, Compliance, Legal, Card Technology, IT, and Finance. One direct colleague worked alongside me on benchmarking and design.</div>
       </div>
       <div class="star-block hidden recall-hide">
         <div class="star-label">Action</div>
@@ -1114,7 +1174,7 @@
       </div>
       <div class="star-block hidden recall-hide">
         <div class="star-label">Result</div>
-        <div class="star-text">The product launched to <strong>general release</strong> across the three tiers — no event, but commercially activated and regulatorily approved. The pricing re-modelling held. The Card Technology integration shipped. Beyond this workstream, I went on to design a <strong>national branch performance and customer intelligence survey across 30+ branches</strong> that became a standard for the organisation, and scoped a mobile banking application to demo stage. The credit card insurance product was the one that taught me what cross-functional governance under regulatory pressure actually feels like.</div>
+        <div class="star-text">The product launched to <strong>general release</strong> across the three tiers — no event, but commercially activated and regulatorily approved. The pricing re-modelling held. The Card Technology integration shipped. Beyond this workstream, I went on to design a <strong>national branch performance and customer intelligence survey across 30+ branches</strong> that became a standard for the organisation. The credit card insurance product was the one that taught me what cross-functional governance under regulatory pressure actually feels like.</div>
       </div>
       <div class="star-recall-controls">
         <button class="recall-btn" data-target="moza-star">Reveal Action &amp; Result</button>
@@ -1127,7 +1187,7 @@
   </div>
 
   <div class="tip">
-    <strong>Why this story works for Nipro.</strong> Six-function cross-functional matrix in a regulated environment is the exact shape of the Digital Ecosystem PM role. Risk / Compliance / Legal / IT / Finance / Card Tech maps almost 1:1 to R&amp;D / IT / Quality / Regulatory / Software Development / Commercial. The dep manager will recognise the structure immediately. <strong>Lead with this story for any regulated-environment or stakeholder-management probe.</strong>
+    <strong>Why this story works for Nipro.</strong> Six-function cross-functional matrix in a regulated environment is the exact shape of the Digital Ecosystem PM role. Risk / Compliance / Legal / IT / Finance / Card Tech maps almost 1:1 to R&amp;D / IT / Quality / Regulatory / Software Development / Commercial. The dep manager will recognise the structure immediately. <strong>Lead with this story for six-function-matrix, escalation-discipline, or controlled-scope-variation probes. Lead with PreBank for greenfield product ownership probes.</strong>
   </div>
 
   <div class="warn">
@@ -2800,7 +2860,7 @@
       currentSessionStart: null,
       currentSessionReps: 0,
       translations: {},
-      stars: { moza: { mark: null, reps: 0 }, mulala: { mark: null, reps: 0 } },
+      stars: { moza: { mark: null, reps: 0 }, mulala: { mark: null, reps: 0 }, prebank: { mark: null, reps: 0 } },
       drillReps: {},
       medtechModules: {},
       medtechQuizzes: {}
@@ -2812,7 +2872,8 @@
         // Merge — defensively backfill any missing keys from older state shapes
         return Object.assign({}, defaults, parsed, {
           medtechModules: parsed.medtechModules || {},
-          medtechQuizzes: parsed.medtechQuizzes || {}
+          medtechQuizzes: parsed.medtechQuizzes || {},
+          stars: Object.assign({}, defaults.stars, parsed.stars || {})
         });
       }
     } catch (e) {}
@@ -2878,11 +2939,11 @@
     else if (goodCount > 0) goodEl.className = 'stat-value';
     else goodEl.className = 'stat-value warn';
 
-    const starGood = (state.stars.moza.mark === 'good' ? 1 : 0) + (state.stars.mulala.mark === 'good' ? 1 : 0);
-    document.getElementById('t-stars').textContent = `${starGood}/2`;
+    const starGood = (state.stars.moza.mark === 'good' ? 1 : 0) + (state.stars.mulala.mark === 'good' ? 1 : 0) + (state.stars.prebank.mark === 'good' ? 1 : 0);
+    document.getElementById('t-stars').textContent = `${starGood}/3`;
     const starsEl = document.getElementById('t-stars');
-    if (starGood === 2) starsEl.className = 'stat-value good';
-    else if (starGood === 1) starsEl.className = 'stat-value';
+    if (starGood === 3) starsEl.className = 'stat-value good';
+    else if (starGood >= 1) starsEl.className = 'stat-value';
     else starsEl.className = 'stat-value warn';
 
     if (state.lastSession) {
@@ -2906,6 +2967,7 @@
     // STAR rep counters
     document.getElementById('reps-moza').textContent = state.stars.moza.reps;
     document.getElementById('reps-mulala').textContent = state.stars.mulala.reps;
+    document.getElementById('reps-prebank').textContent = state.stars.prebank.reps;
   }
 
   // ============================================================

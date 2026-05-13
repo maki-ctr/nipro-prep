@@ -752,6 +752,30 @@
   }
   .module.done .module-num { background: var(--green-tick); }
   .module.done .module-num::after { content: ' ✓'; }
+  .module.companion {
+    border-left-color: var(--accent);
+    margin-top: -10px;
+    margin-left: 28px;
+    position: relative;
+  }
+  .module.companion::before {
+    content: '';
+    position: absolute;
+    left: -32px;
+    top: -12px;
+    width: 28px;
+    height: 36px;
+    border-left: 2px dashed var(--accent-soft);
+    border-bottom: 2px dashed var(--accent-soft);
+    border-bottom-left-radius: 12px;
+  }
+  .module.companion .module-num {
+    background: var(--accent);
+    width: 36px;
+    font-size: 11px;
+  }
+  .module.companion .module-title { color: var(--accent); }
+  .module.companion .module-header { background: #faf3ec; }
   .module-title {
     flex: 1;
     font-size: 16px;
@@ -1239,12 +1263,12 @@
   <p class="lede">Two stories from the 2015–2016 Moza tenure, used for different probes. <strong>PreBank mobile banking app</strong> — sole product ownership of a greenfield, board-sponsored digital product, vision through demo, in under three months. Lead with this for product-ownership, greenfield-delivery, or executive-sponsor probes. <strong>Credit card insurance product</strong> — six-function cross-functional matrix in a regulated environment, three-week verbal brief. Lead with this for regulated-environment, stakeholder-management, or escalation-discipline probes.</p>
 
       <div class="video-embed-block">
-        <div class="video-label">📺 Video companion — STAR Stories: Moza & Mulala</div>
+        <div class="video-label">📺 Video companion — Moza STAR</div>
         <div class="video-container">
-          <iframe src="https://www.youtube.com/embed/yIckoNAhO3c" title="STAR Stories: Moza & Mulala" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          <iframe src="https://www.youtube.com/embed/h2gYNkizZro" title="Moza STAR" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
         <div class="video-fallback">
-          <a href="https://youtu.be/yIckoNAhO3c" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
+          <a href="https://youtu.be/h2gYNkizZro" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
         </div>
       </div>
 
@@ -1354,6 +1378,16 @@
 <section id="mulala">
   <h2>STAR · Mulala app launch</h2>
   <p class="lede">End-to-end software product ownership · two-studio delivery · UX owned directly · iterative releases · structured B2B distribution outreach · controlled fade. The story to lead with when the dep manager probes software development lifecycles or product ownership.</p>
+
+      <div class="video-embed-block">
+        <div class="video-label">📺 Video companion — Mulala STAR</div>
+        <div class="video-container">
+          <iframe src="https://www.youtube.com/embed/y7JzbK0IUeQ" title="Mulala STAR" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        <div class="video-fallback">
+          <a href="https://youtu.be/y7JzbK0IUeQ" target="_blank" rel="noopener">🔗 Open on YouTube if embed fails →</a>
+        </div>
+      </div>
 
   <div class="star-card" id="mulala-star">
     <div class="star-card-header">
@@ -2043,6 +2077,156 @@
         <span class="module-time-spent">Allow 2.5–3 hours total at 1.5× speed</span>
         <button class="mark-done-btn" data-mark-mod="1">Mark module 1 complete</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ============== MODULE 1.5 — companion ============== -->
+  <div class="module companion" id="mod-1-5">
+    <div class="module-header" data-mod="1-5">
+      <span class="module-num">1.5</span>
+      <span class="module-title">ISO 13485 &amp; EU MDR — answering the probes without overclaiming</span>
+      <span class="module-meta">~45 min · companion to Module 1 · pre-Round-2</span>
+      <span class="module-toggle">+</span>
+    </div>
+    <div class="module-body">
+
+      <div class="tip">
+        <strong>Why this module exists.</strong> A dep manager round will almost certainly probe ISO 13485 and EU MDR knowledge. Your certs (Alison) prove you've taken the framework seriously; they don't prove you've operated under it. This module gives you the <strong>one-line reads</strong>, the <strong>three defensible anchors per standard</strong>, and the <strong>recovery moves</strong> when a probe pushes deeper than your studied knowledge. Goal isn't to fake operational experience — it's to demonstrate genuine understanding of the governance shape, name the gap honestly when pushed, and bridge to PM craft you have done.
+      </div>
+
+      <h4>The one-sentence reads</h4>
+      <p><strong>ISO 13485:</strong> the quality management system standard that wraps everything else — the governance backbone defining how you document, review, audit, and improve every process in a medical device organisation. <em>Framework, not product requirement.</em></p>
+      <p><strong>EU MDR 2017/745:</strong> replaced the old Medical Device Directive, fully applicable since May 2021. Tightened classification, raised the clinical-evidence bar, made post-market surveillance continuous, and made Notified Body involvement the bottleneck for anything above Class I.</p>
+
+      <h4>The honest position (applied to reg probes)</h4>
+      <p>Same stance as the strategic framing card. <strong>"Recognise" / "what's clicked studying it" / "the way I understand it"</strong> — not <strong>"I've worked with" / "I've owned" / "I've implemented."</strong> If a probe pushes for hands-on detail you don't have, the recovery move is to turn the unknown into a question:</p>
+      <p><em>"I haven't run this in production — what does that look like day-to-day in your team?"</em></p>
+      <p>That's the senior move. Faking operational depth is the fatal one. Use the honest-gap line <strong>once</strong> if pushed hard, then bridge:</p>
+      <div class="warn">
+        <strong>The honest-gap line — deploy once, don't repeat.</strong><br><br>
+        <em>"To be direct — I've studied these frameworks rather than operated under them. What's clicked is the governance shape. What I'd be learning on the job is the specific artefacts your team produces and the rhythm of how 13485 and MDR show up in weekly PM work. The certifications are evidence I've taken the framework seriously, not a claim to have run it."</em>
+      </div>
+
+      <h4>ISO 13485 in 90 seconds — three anchors you can defend</h4>
+      <ol>
+        <li><strong>Clause structure that matters for PM.</strong> Section 7 (product realisation) holds design controls, purchasing, production, traceability. Section 8 (measurement, analysis, improvement) holds CAPA, internal audit, management review. You're not writing the QMS as a PM — you're delivering against it. The clauses that constrain your project are mostly Section 7.</li>
+        <li><strong>The "establish and maintain" pattern.</strong> Every process needs documented procedures, records of execution, and evidence of ongoing review. For a PM that translates to: your project artefacts aren't optional documentation — DHF, design reviews, risk management file, CAPA records — they're QMS evidence.</li>
+        <li><strong>Risk-based approach (2016 revision).</strong> The 2016 update made risk-based thinking explicit across the whole standard — not just product risk under ISO 14971, but risk applied to supplier selection, process validation, training, software validation. PM-side: decisions get justified on risk grounds. "Why this supplier? Risk-based assessment." "Why this much V&amp;V? Class-of-device risk profile."</li>
+      </ol>
+
+      <h4>EU MDR in 90 seconds — three anchors you can defend</h4>
+      <ol>
+        <li><strong>Classification got stricter — 22 rules in Annex VIII.</strong> Rule changes pushed many products up a class — Software as a Medical Device (SaMD) particularly under <strong>Rule 11</strong>. Class I self-certifies; IIa, IIb, III all need a Notified Body. <strong>The class question is the first thing you ask on a new product</strong> because it determines NB involvement and therefore timeline.</li>
+        <li><strong>Technical Documentation (Annex II–III) replaced the old Technical File.</strong> Heavier evidence — particularly Clinical Evaluation Report (CER) under Annex XIV. The <strong>Stratification Gap</strong> is where most CERs fail: data from one device subgroup extrapolated to claim whole-family performance. Notified Bodies don't accept that anymore. PM coordination job: keep the clinical team and the technical writer working from the same data scope.</li>
+        <li><strong>Post-market surveillance got teeth — Articles 83–86.</strong> Continuous PMS plan, PSURs for Class IIa and above, trend analysis, immediate vigilance reporting. Not passive monitoring — an active loop feeding back into the technical documentation. PMS isn't a post-launch handoff; it's a permanent workstream that may trigger design changes mid-lifecycle.</li>
+      </ol>
+
+      <h4>Quick-reference vocabulary you should recognise on hearing</h4>
+      <ul>
+        <li><strong>MDCG guidance</strong> — Medical Device Coordination Group. Publishes interpretive guidance on how to implement MDR clauses. When the regulation is ambiguous, MDCG guidance is what Notified Bodies reference. <em>MDCG 2019-11 (software qualification/classification) and MDCG 2020-7 (CER) are the two most-cited.</em></li>
+        <li><strong>EUDAMED</strong> — European database for medical devices. Centralises UDI, certificates, clinical investigations, vigilance reports. Phased rollout, some modules still not fully mandatory.</li>
+        <li><strong>UDI</strong> — Unique Device Identification. Mandatory traceability identifier.</li>
+        <li><strong>PRRC</strong> — Person Responsible for Regulatory Compliance. Mandatory appointment in every manufacturer under MDR.</li>
+        <li><strong>Notified Body</strong> — independent conformity assessment body. Reviews technical documentation, audits the QMS, issues the CE certificate. Current capacity reality: 13–24 months for Class IIb, longer for Class III.</li>
+      </ul>
+
+      <h4>Probe drills — reveal the scaffold only after you've answered aloud</h4>
+
+      <div class="quiz-block" data-quiz="1-5-1">
+        <div class="quiz-q">1. "Have you worked under a 13485 QMS?"</div>
+        <div class="quiz-a"><em>Honest, then bridge.</em> "No, I haven't operated under a 13485 QMS specifically. I've operated under regulated frameworks — banking with Banco de Moçambique's prudential framework at Moza, Walmart's TPI compliance for procurement at Builders Warehouse — so I recognise the shape of QMS-governed delivery. The specific 13485 artefacts I've studied rather than authored. What I'd want to understand on day one is how your team's QMS is structured — which clauses generate the most PM-side coordination load."</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-1">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-2">
+        <div class="quiz-q">2. "What's the difference between ISO 13485 and ISO 9001?"</div>
+        <div class="quiz-a">13485 is medical-device-specific. It removes ISO 9001's "continual improvement" language in favour of "maintaining effectiveness" — because in medical devices, change carries risk. It adds explicit requirements for risk management, design controls, complaint handling, post-market surveillance, and regulatory reporting that 9001 doesn't mandate. Mental model: <em>13485 is 9001 reshaped for an environment where the standard's job is patient-safety governance, not generic quality.</em></div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-2">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-3">
+        <div class="quiz-q">3. "Tell me about CAPA — have you run one?"</div>
+        <div class="quiz-a"><em>Don't claim hands-on.</em> "I understand the structure — root cause analysis, corrective action, preventive action, effectiveness check — and where it fits in the QMS feedback loop. I haven't authored a CAPA. What's the volume look like in your team? Is it weighted more toward complaint-driven or audit-driven CAPAs?" <strong>Trap to avoid:</strong> never say "I've worked with CAPAs." Turning the gap into a question about their context is the senior move.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-3">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-4">
+        <div class="quiz-q">4. "What's your read on internal audits and management review?"</div>
+        <div class="quiz-a"><strong>Internal audits:</strong> how the QMS proves it's actually functioning — auditing the auditable. As a PM you'd expect to be on the receiving end of findings, not running the audit. The CAPA loop is where audit findings convert into corrective work — that's where PM coordination lands. <strong>Management review:</strong> periodic leadership review of QMS effectiveness — inputs include audit findings, CAPA status, customer feedback, post-market surveillance data. Output is decisions and resource allocation. A PM contributes data, doesn't run the review.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-4">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-5">
+        <div class="quiz-q">5. "What's the difference between MDR and the old MDD?"</div>
+        <div class="quiz-a">MDD was a <em>directive</em> — implemented through national law, variable across member states. MDR is a <em>regulation</em> — directly binding, uniform. Substantive changes: stricter classification (Rule 11 for software is the everyone-cites example), stronger clinical evidence requirement, mandatory UDI, EUDAMED database, more rigorous Notified Body oversight, mandatory PRRC in every manufacturer. <strong>Intent:</strong> post-PIP-scandal — raise the bar for what can be sold in the EU as a medical device.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-5">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-6">
+        <div class="quiz-q">6. "Notified Body timelines — what's your read?"</div>
+        <div class="quiz-a">"Current reality is 13 to 24 months for a typical Class IIb conformity assessment, much longer for Class III with full design dossier review. The capacity crunch is real — fewer Notified Bodies, more devices in the queue post-MDR transition. As a PM that means Notified Body coordination is critical path planning, not a downstream concern. You build the timeline backwards from when you need the certificate."</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-6">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-7">
+        <div class="quiz-q">7. "Have you worked on a Clinical Evaluation Report?"</div>
+        <div class="quiz-a"><em>Don't overclaim.</em> "I haven't authored a CER. What I've studied is where they fail — the <strong>Stratification Gap</strong>, claiming class-wide performance from subgroup data, is the pattern Notified Bodies are pushing back on most. From a PM angle the coordination question is: who owns the CER scope decision, and how early do we lock it before evidence collection starts."</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-7">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-8">
+        <div class="quiz-q">8. "Walk me through post-market surveillance under MDR."</div>
+        <div class="quiz-a">PMS under Articles 83–86 is continuous, not periodic. Manufacturer maintains a PMS plan — proactive data collection from the field, complaint analysis, trend monitoring. For Class IIa and above, the output is a Periodic Safety Update Report (PSUR). Serious incidents trigger immediate vigilance reporting (typically 15 days, 2 days for serious public health threat). The PMS loop feeds back into the technical documentation — if signals emerge, the risk file, CER, and potentially design controls get updated. <strong>PM angle:</strong> PMS isn't a post-launch handoff. It's a permanent workstream that can trigger mid-lifecycle change requests.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-8">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-9">
+        <div class="quiz-q">9. "How would you classify a software product under MDR?"</div>
+        <div class="quiz-a"><strong>Rule 11</strong> (Annex VIII) is the rule everyone cites. Software intended to provide information for diagnostic or therapeutic purposes is generally <strong>Class IIa minimum</strong>; if decisions can cause death or irreversible deterioration, Class III; serious deterioration or surgical intervention, Class IIb. Class I software is rare under MDR. <strong>MDCG 2019-11</strong> is the guidance document on software qualification — worth being able to name. <em>If pushed on a specific product:</em> "I'd start with intended purpose, then walk Rule 11 against the clinical decision impact, then validate the classification with regulatory before locking the project plan around it."</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-9">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="quiz-block" data-quiz="1-5-10">
+        <div class="quiz-q">10. "What's a Notified Body and what do they actually do?"</div>
+        <div class="quiz-a">Independent conformity assessment body designated by an EU member state under MDR. They review the manufacturer's technical documentation, audit the QMS (against ISO 13485 typically), and — if conformity is demonstrated — issue the CE certificate that lets the device on the EU market. <strong>For anything above Class I, no NB certificate means no market access.</strong> Capacity is the constraint: post-MDR transition, fewer designated NBs, longer queues. <em>PM operational point:</em> NB engagement isn't a phase-end event. You're managing a relationship across the project, including pre-submission meetings, document drafts, and review responses.</div>
+        <div class="quiz-controls">
+          <button class="quiz-reveal" data-quiz="1-5-10">Reveal scaffold</button>
+        </div>
+      </div>
+
+      <div class="tip">
+        <strong>One thing worth doing before the round.</strong> Skim <strong>MDCG 2019-11</strong> (software qualification under MDR) — even 30 minutes. Given Nipro's digital ecosystem framing, it's the most strategically relevant MDCG document for this conversation. Being able to say <em>"I was reading MDCG 2019-11 last week on software classification under Rule 11"</em> lands differently than generic ISO/MDR talk. <strong>Specific, recent, and shows the trajectory the framing card is built around.</strong>
+      </div>
+
+      <h4>Three traps to avoid</h4>
+      <ol>
+        <li><strong>Never claim CAPA, nonconformance, or audit hands-on experience.</strong> If you haven't authored one, don't imply you have. The recovery move is to turn the gap into a question about their team's context.</li>
+        <li><strong>Never claim "I've worked with 13485 / MDR" as shorthand for studied it.</strong> A senior MedTech PM will hear the difference within the next sentence. Use "studied," "recognise," "what's clicked."</li>
+        <li><strong>Never bluff on numbers or specifics under pressure.</strong> If you can't remember whether vigilance reporting is 15 days or 30 days, say "I'd need to check the article — vigilance windows are short, in the order of weeks for serious incidents, shorter for serious public health threats." Direction over precision when the precision isn't verified.</li>
+      </ol>
+
+      <div class="module-footer">
+        <span class="module-time-spent">~45 min · companion to Module 1 · drill probes aloud before revealing scaffolds</span>
+      </div>
+
     </div>
   </div>
 

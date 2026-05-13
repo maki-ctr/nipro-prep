@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nipro · Dep Manager Round Prep · v7.3</title>
+<title>Nipro · Dep Manager Round Prep · v7.5</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -423,6 +423,134 @@
     letter-spacing: 0.5px;
   }
   .star-recall-controls .reps strong { color: var(--forest); font-size: 13px; }
+
+  /* ============================================================
+     COACHING PANEL — appears after marking a STAR recall
+     ============================================================ */
+  .star-coaching-panel {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 6px;
+    background: var(--paper-warm);
+    border-left: 4px solid var(--rule);
+    font-size: 13.5px;
+    line-height: 1.6;
+    display: none;
+  }
+  .star-coaching-panel.show { display: block; }
+  .star-coaching-panel.good {
+    background: #eaf2ec;
+    border-left-color: var(--green-tick);
+  }
+  .star-coaching-panel.shaky {
+    background: #f7efd9;
+    border-left-color: var(--amber);
+  }
+  .star-coaching-panel.bad {
+    background: #f7e4dc;
+    border-left-color: var(--red);
+  }
+  .star-coaching-panel .coaching-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .star-coaching-panel.good .coaching-header { color: var(--green-tick); }
+  .star-coaching-panel.shaky .coaching-header { color: var(--amber); }
+  .star-coaching-panel.bad .coaching-header { color: var(--red); }
+  .star-coaching-panel .coaching-title {
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .star-coaching-panel ul {
+    margin: 6px 0 0 18px;
+    padding: 0;
+  }
+  .star-coaching-panel li {
+    margin-bottom: 5px;
+    color: var(--ink);
+  }
+  .star-coaching-panel li strong { color: var(--forest); }
+  .star-coaching-panel .specific-note {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(0,0,0,0.12);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+  }
+
+  /* ============================================================
+     EDIT MODE — contenteditable styling and toolbar
+     ============================================================ */
+  body.edit-mode .editable {
+    outline: 1px dashed var(--accent);
+    outline-offset: 3px;
+    background: rgba(184, 97, 43, 0.04);
+    border-radius: 3px;
+    transition: background 0.15s;
+    cursor: text;
+  }
+  body.edit-mode .editable:hover {
+    background: rgba(184, 97, 43, 0.08);
+  }
+  body.edit-mode .editable:focus {
+    outline: 2px solid var(--accent);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(184, 97, 43, 0.12);
+  }
+  body.edit-mode .editable.edited {
+    border-left: 3px solid var(--accent);
+    padding-left: 8px;
+  }
+  #edit-mode-toggle.active {
+    background: var(--accent) !important;
+    color: white !important;
+    border-color: var(--accent) !important;
+  }
+  .edit-mode-banner {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--accent);
+    color: white;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 -20px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  body.edit-mode .edit-mode-banner { display: block; }
+  .edit-mode-banner button {
+    background: white;
+    color: var(--accent);
+    border: none;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .edit-mode-banner button:hover { background: var(--paper); }
+  .edit-mode-banner .count {
+    background: rgba(255,255,255,0.25);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    font-size: 11px;
+  }
 
   /* Question drill cards */
   .qd-card {
@@ -978,10 +1106,17 @@
 </head>
 <body>
 <div class="app">
+<div class="edit-mode-banner">
+  ✎ Edit mode is ON — click any text block to revise · changes save automatically to this browser
+  <span class="count" id="edit-count">0 edits</span>
+  <button onclick="exportEdits()">Export edits</button>
+  <button onclick="clearEdits()">Clear all edits</button>
+  <button onclick="toggleEditMode()">Done</button>
+</div>
 
 <header>
   <div class="eyebrow">Nipro · Round 2 · Department Manager</div>
-  <h1>Rehearsal Doc · v7.3</h1>
+  <h1>Rehearsal Doc · v7.5</h1>
   <div class="subtitle">Closing the PM-craft gap before the dep manager round</div>
   <div class="meta">
     <span><span class="dot"></span>Lead time: 1–2 weeks</span>
@@ -1013,6 +1148,7 @@
     <span class="stat-value" id="t-last" style="font-size: 14px;">never</span>
   </div>
   <div class="tracker-actions">
+    <button id="edit-mode-toggle" onclick="toggleEditMode()">✎ Edit mode: OFF</button>
     <button onclick="endSession()">End session</button>
     <button class="danger" onclick="resetProgress()">Reset</button>
   </div>
@@ -1144,6 +1280,7 @@
         <button class="star-mark bad" data-mark="bad" data-star="prebank">✗ Stalled</button>
         <span class="reps">Reps: <strong id="reps-prebank">0</strong></span>
       </div>
+      <div class="star-coaching-panel" id="coaching-prebank"></div>
     </div>
   </div>
 
@@ -1194,6 +1331,7 @@
         <button class="star-mark bad" data-mark="bad" data-star="moza">✗ Stalled</button>
         <span class="reps">Reps: <strong id="reps-moza">0</strong></span>
       </div>
+      <div class="star-coaching-panel" id="coaching-moza"></div>
     </div>
   </div>
 
@@ -1246,6 +1384,7 @@
         <button class="star-mark bad" data-mark="bad" data-star="mulala">✗ Stalled</button>
         <span class="reps">Reps: <strong id="reps-mulala">0</strong></span>
       </div>
+      <div class="star-coaching-panel" id="coaching-mulala"></div>
     </div>
   </div>
 
@@ -3269,6 +3408,7 @@
 
       const card = document.createElement('div');
       card.className = 'translator-card';
+      card.dataset.id = t.id;
       if (tState.mark) card.classList.add('marked-' + tState.mark);
 
       const isRevealed = tState._revealed === true;
@@ -3357,6 +3497,7 @@
 
       const card = document.createElement('div');
       card.className = 'qd-card';
+      card.dataset.id = q.id;
       card.innerHTML = `
         <div class="qd-question">${escapeHtml(q.question)}<span class="qd-weight">${weightLabel}</span></div>
         <div class="qd-scaffold ${isRevealed ? '' : 'hidden'}">${q.scaffold}</div>
@@ -3420,10 +3561,135 @@
         const siblings = btn.parentNode.querySelectorAll('.star-mark');
         siblings.forEach(s => s.classList.remove('active'));
         if (state.stars[star].mark) btn.classList.add('active');
+        renderCoachingPanel(star);
         saveState();
         renderTracker();
       });
     });
+    // Initial render of any persisted coaching state + button visual
+    ['prebank', 'moza', 'mulala'].forEach(starKey => {
+      const mark = state.stars[starKey] && state.stars[starKey].mark;
+      if (mark) {
+        const btn = document.querySelector(`.star-mark.${mark}[data-star="${starKey}"]`);
+        if (btn) btn.classList.add('active');
+      }
+      renderCoachingPanel(starKey);
+    });
+  }
+
+  // ============================================================
+  // COACHING PANEL — recall-mark-specific guidance per STAR
+  // ============================================================
+  const COACHING_DATA = {
+    prebank: {
+      good: {
+        title: "Clean recall on the least-verified STAR — well done.",
+        general: [
+          "Don't drill PreBank again this session. Diminishing returns set in fast on a story you can already tell cleanly.",
+          "Stress-test instead: have someone (or yourself, voice memo) interrupt mid-recall with a hard probe. Pick one of the four warn-block probes — under $50K scope, shadow-IT, MedTech mapping, or post-demo outcome.",
+          "Audio-record one full clean run. If you can deliver it under 90 seconds, the pacing is right. Over 2 minutes means you're padding."
+        ],
+        specific: "The single content trap: the Banco de Moçambique line. 'Alignment for the eventual production scope' must come out of your mouth the same way it's written. If you find yourself saying 'BdM approved' or 'BdM reviewed' under pressure, you're over-claiming."
+      },
+      shaky: {
+        title: "Got most, but the specifics are where probes land.",
+        general: [
+          "Identify the exact block where you stalled — Situation, Task, Action, or Result — and re-read it twice silently, then deliver it aloud three times.",
+          "PreBank's most-likely probe targets are the under-$50K spend, the under-3-months timeline, and the four-function coordination. Drill those numbers as facts, not as story beats.",
+          "Do one cold-start delivery 4–6 hours later. Spaced retrieval beats massed repetition."
+        ],
+        specific: "If 'Got most' means you fumbled the Banco de Moçambique framing — that's the one to drill aloud five times before the round. The structural-parallel-not-equivalence framing is the single hardest sentence in this story."
+      },
+      bad: {
+        title: "Stalled — treat this as the highest-priority STAR to drill.",
+        general: [
+          "Don't redrill cold immediately. First, re-read the Situation and Task blocks aloud twice while looking at the text. Then do one fully-revealed read-through of all four blocks.",
+          "Hide Action & Result and try again. Then again. Five passes today, two passes tomorrow, one cold-start the day before the round.",
+          "If you're still stalling after five passes, the issue is probably one specific factual claim you don't believe under pressure — find it and either soften the wording or remove it."
+        ],
+        specific: "This is the least-verified card in the whole doc. If a specific claim (under $50K, under 3 months, the four-function structure) doesn't ring true when you say it, soften it now rather than discover it under questioning. 'Demo-stage spend in the low five-figure USD range' is safer than '$50K' if the number doesn't sit."
+      }
+    },
+    moza: {
+      good: {
+        title: "Clean recall on the six-function-matrix story — strong.",
+        general: [
+          "This is your main vehicle for cross-functional governance probes. Move on; don't redrill.",
+          "Test the lead-with vs lead-with decision aloud: 'For governance probes I lead with Moza. For greenfield product probes I lead with PreBank.' If that decision is automatic, you're ready.",
+          "Run one probe drill: '3 weeks isn't very long for a six-function workstream — what did you cut?' The honest answer is in the warn block. Deliver it without padding."
+        ],
+        specific: "The three remaining best-recall claims (three-week deadline, six-function matrix, Card Tech shipped) weren't verified in v7.4. If any felt shaky during this clean recall, flag in edit mode now and soften before next drill."
+      },
+      shaky: {
+        title: "Got most — the cross-functional shape is the part that has to land.",
+        general: [
+          "Re-deliver focusing on the six functions by name: Risk, Compliance, Legal, Card Technology, IT, Finance. That list is the spine of the story.",
+          "The two specific challenges (financial re-modelling, Card Tech dependency contention) are what convert this from 'I ran a workstream' to 'I held governance.' Drill those two beats specifically.",
+          "Do a 4-hour-later cold start."
+        ],
+        specific: "If the part you fumbled was the escalation discipline beat ('I tried lateral resolution first, then escalated through my manager when the lateral approach had run out'), that sentence verbatim. Senior PMs recognise the framing immediately."
+      },
+      bad: {
+        title: "Stalled on the secondary STAR — diagnose before redrilling.",
+        general: [
+          "Re-read the Situation and Task blocks aloud twice while looking at the text. Then re-read Action and Result the same way.",
+          "Three full passes today with the text visible, then one cold-start tomorrow.",
+          "If the six-function list is what's not sticking, write the six functions on paper and refer to it during the next two recalls."
+        ],
+        specific: "If a specific claim (1,763 accounts, three weeks, Card Tech integration shipped) doesn't ring true when you say it, flag it in edit mode and soften the wording. The named incumbents were already softened in v7.4 for the same reason — same principle applies to the remaining three best-recall items."
+      }
+    },
+    mulala: {
+      good: {
+        title: "Clean recall on Mulala — software product ownership story is intact.",
+        general: [
+          "Don't redrill cold today. Stress-test instead with one of the harder probes — 'Why didn't it scale?' or 'How would you do this differently in MedTech?'",
+          "The controlled-fade decision is the senior beat. Make sure that lands without sounding defensive. 'I made the call to stop spending against it rather than escalate budget chasing a market that wasn't responding' — verbatim if possible.",
+          "Audio-record one run. Listen back for whether 'two-studio delivery + UX owned directly' lands clean."
+        ],
+        specific: "Known content inconsistency: Task block says 'freelance designer' while Action block says 'design studio.' If a probe lands on team structure, you'll need to bridge those two. The fix is in the handoff — apply it in edit mode now."
+      },
+      shaky: {
+        title: "Got most — the senior beats are what need to land.",
+        general: [
+          "The technical layer (Bitbucket version control, AWS S3/SES, Crashlytics) is the differentiator from a generic 'I shipped an app' story. Drill that vocabulary until it's automatic.",
+          "The distribution outreach beat (Zap October 2016, Unitel September 2017) and the licensing-offer escalation are what convert this from a build story to a product-lifecycle story. Drill those specifics.",
+          "Do one cold-start 4 hours later."
+        ],
+        specific: "If 'two-studio delivery, UX owned directly' is what fumbled, that's the upgraded framing from v7.4 — say it three times aloud. The Task block still says 'freelance designer' (the inconsistency flagged in the handoff); apply the one-line fix in edit mode."
+      },
+      bad: {
+        title: "Stalled on Mulala — work the structure before the details.",
+        general: [
+          "Re-read all four blocks aloud with the text visible. Twice. Then hide and retry.",
+          "If the version-history detail (v0.17, v1.1, v1.12, v1.3) isn't sticking, drop it on the next recall — say 'iterative releases through four versions' instead of citing the numbers. Direction over precision when under pressure.",
+          "Three passes today, one cold-start tomorrow."
+        ],
+        specific: "If the part you stalled on was 'why did it stop?' — re-read the Result block. The controlled-fade framing ('I made the call to stop spending against it') is the answer. Without that beat, the story sounds like failure rather than disciplined exit."
+      }
+    }
+  };
+
+  function renderCoachingPanel(starKey) {
+    const panel = document.getElementById('coaching-' + starKey);
+    if (!panel) return;
+    const mark = state.stars[starKey] && state.stars[starKey].mark;
+    if (!mark) {
+      panel.classList.remove('show', 'good', 'shaky', 'bad');
+      panel.innerHTML = '';
+      return;
+    }
+    const data = COACHING_DATA[starKey] && COACHING_DATA[starKey][mark];
+    if (!data) return;
+    const icon = mark === 'good' ? '✓' : mark === 'shaky' ? '~' : '✗';
+    const label = mark === 'good' ? 'Clean recall · next moves' : mark === 'shaky' ? 'Got most · what to drill' : 'Stalled · recovery plan';
+    panel.className = 'star-coaching-panel show ' + mark;
+    panel.innerHTML = `
+      <div class="coaching-header">${icon} ${label}</div>
+      <div class="coaching-title">${data.title}</div>
+      <ul>${data.general.map(g => `<li>${g}</li>`).join('')}</ul>
+      <div class="specific-note">${data.specific}</div>
+    `;
   }
 
   // ============================================================
@@ -3571,6 +3837,220 @@
   }
 
   // ============================================================
+  // EDIT MODE — contenteditable prose with localStorage persistence
+  // ============================================================
+  const EDITS_KEY = 'nipro_v7_edits_v1';
+
+  // Selectors that identify editable prose blocks.
+  // Tagging is automatic on init — no markup changes needed across 3,000+ lines.
+  const EDITABLE_SELECTORS = [
+    '.star-text',                       // STAR S/T/A/R blocks + framing card blocks
+    '.lede',                            // section ledes
+    '.tip',                             // tip blocks
+    '.warn',                            // warn blocks
+    '.note',                            // small notes (including translator card notes)
+    '.translator-natural .text',        // translator card "natural phrasing"
+    '.translator-pm .text',             // translator card "PM register"
+    '.qd-question',                     // drill question text
+    '.qd-scaffold',                     // drill scaffold/answer text
+    '.quiz-q',                          // MedTech quiz questions
+    '.quiz-a',                          // MedTech quiz answers
+    '.module-body p',                   // MedTech module prose paragraphs
+    '.module-body li'                   // MedTech module list items
+  ];
+
+  function loadEdits() {
+    try {
+      const raw = localStorage.getItem(EDITS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  function saveEdits(edits) {
+    try { localStorage.setItem(EDITS_KEY, JSON.stringify(edits)); }
+    catch (e) { console.warn('Could not save edits:', e); }
+  }
+
+  // Assign a stable ID to each editable element based on nearest stable parent + role.
+  // Stability matters because translator/drill/medtech re-render on filter and mark changes.
+  function getStableParentId(el) {
+    // Walk up looking for: id attribute, data-id, data-mod, data-quiz, data-target
+    let cur = el;
+    while (cur && cur !== document.body) {
+      if (cur.id) return 'id_' + cur.id;
+      if (cur.dataset) {
+        if (cur.dataset.id) return 'did_' + cur.dataset.id;
+        if (cur.dataset.mod) return 'mod_' + cur.dataset.mod;
+        if (cur.dataset.quiz) return 'quiz_' + cur.dataset.quiz;
+        if (cur.dataset.target) return 'tgt_' + cur.dataset.target;
+      }
+      cur = cur.parentElement;
+    }
+    return null;
+  }
+
+  function tagEditables() {
+    const localSeen = {};
+    EDITABLE_SELECTORS.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        // Skip if already tagged
+        if (el.dataset.editId) return;
+        const safeSel = sel.replace(/[^a-z0-9]/gi, '_');
+        const parentId = getStableParentId(el);
+        let eid;
+        if (parentId) {
+          // Count occurrences of this selector within this stable parent
+          const parentKey = parentId + '__' + safeSel;
+          localSeen[parentKey] = (localSeen[parentKey] || 0) + 1;
+          eid = `ed_${parentId}_${safeSel}_${localSeen[parentKey]}`;
+        } else {
+          // Fall back to global index (for top-level prose like section ledes, tips, warns)
+          localSeen[safeSel] = (localSeen[safeSel] || 0) + 1;
+          eid = `ed_global_${safeSel}_${localSeen[safeSel]}`;
+        }
+        el.classList.add('editable');
+        el.dataset.editId = eid;
+        // Capture original HTML once for revert support
+        if (!el.dataset.originalHtml) {
+          el.dataset.originalHtml = el.innerHTML;
+        }
+      });
+    });
+  }
+
+  function applyEdits() {
+    const edits = loadEdits();
+    document.querySelectorAll('.editable').forEach(el => {
+      const eid = el.dataset.editId;
+      if (eid && edits[eid] !== undefined) {
+        el.innerHTML = edits[eid];
+        el.classList.add('edited');
+      }
+    });
+    updateEditCount();
+  }
+
+  function updateEditCount() {
+    const edits = loadEdits();
+    const n = Object.keys(edits).length;
+    const counter = document.getElementById('edit-count');
+    if (counter) counter.textContent = `${n} edit${n === 1 ? '' : 's'}`;
+  }
+
+  let editModeOn = false;
+
+  window.toggleEditMode = function() {
+    editModeOn = !editModeOn;
+    document.body.classList.toggle('edit-mode', editModeOn);
+    const toggleBtn = document.getElementById('edit-mode-toggle');
+    if (toggleBtn) {
+      toggleBtn.textContent = editModeOn ? '✎ Edit mode: ON' : '✎ Edit mode: OFF';
+      toggleBtn.classList.toggle('active', editModeOn);
+    }
+    document.querySelectorAll('.editable').forEach(el => {
+      if (editModeOn) {
+        el.contentEditable = 'true';
+        el.spellcheck = true;
+      } else {
+        el.contentEditable = 'false';
+        el.removeAttribute('spellcheck');
+      }
+    });
+    if (editModeOn) updateEditCount();
+  };
+
+  window.exportEdits = function() {
+    const edits = loadEdits();
+    const n = Object.keys(edits).length;
+    if (n === 0) {
+      alert('No edits to export yet.');
+      return;
+    }
+    // Build a human-readable text export
+    let out = `Nipro Prep Doc — Edits Export\nGenerated: ${new Date().toISOString()}\nTotal edits: ${n}\n\n${'='.repeat(60)}\n\n`;
+    Object.keys(edits).forEach(eid => {
+      const el = document.querySelector(`[data-edit-id="${eid}"]`);
+      const original = el ? (el.dataset.originalHtml || '(original unavailable)') : '(element no longer in DOM)';
+      out += `EDIT ID: ${eid}\n\n`;
+      out += `--- ORIGINAL ---\n${stripTags(original)}\n\n`;
+      out += `--- EDITED ---\n${stripTags(edits[eid])}\n\n`;
+      out += `${'='.repeat(60)}\n\n`;
+    });
+    // Try clipboard, fall back to download
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(out).then(() => {
+        alert(`${n} edit${n === 1 ? '' : 's'} copied to clipboard.\n\nTip: paste into a chat with Claude to incorporate the edits into the doc.`);
+      }, () => downloadEditsText(out));
+    } else {
+      downloadEditsText(out);
+    }
+  };
+
+  function downloadEditsText(text) {
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nipro_prep_edits_${new Date().toISOString().slice(0,10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function stripTags(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  }
+
+  window.clearEdits = function() {
+    const edits = loadEdits();
+    const n = Object.keys(edits).length;
+    if (n === 0) { alert('No edits to clear.'); return; }
+    if (!confirm(`Clear all ${n} edit${n === 1 ? '' : 's'}? This restores every prose block to its original content. Cannot be undone.`)) return;
+    localStorage.removeItem(EDITS_KEY);
+    document.querySelectorAll('.editable').forEach(el => {
+      if (el.dataset.originalHtml !== undefined) {
+        el.innerHTML = el.dataset.originalHtml;
+      }
+      el.classList.remove('edited');
+    });
+    updateEditCount();
+  };
+
+  function wireEditHandlers() {
+    document.body.addEventListener('blur', (e) => {
+      const el = e.target.closest('.editable');
+      if (!el || !editModeOn) return;
+      const eid = el.dataset.editId;
+      if (!eid) return;
+      const edits = loadEdits();
+      const newHtml = el.innerHTML;
+      const original = el.dataset.originalHtml || '';
+      if (newHtml.trim() === original.trim()) {
+        // Reverted to original — remove the edit record
+        delete edits[eid];
+        el.classList.remove('edited');
+      } else {
+        edits[eid] = newHtml;
+        el.classList.add('edited');
+      }
+      saveEdits(edits);
+      updateEditCount();
+    }, true);
+    // Prevent Enter from creating divs — use line breaks instead in editable blocks
+    document.body.addEventListener('keydown', (e) => {
+      if (!editModeOn) return;
+      const el = e.target.closest('.editable');
+      if (!el) return;
+      if (e.key === 'Escape') {
+        el.blur();
+      }
+    });
+  }
+
+  // ============================================================
   // INIT
   // ============================================================
   wireTabs();
@@ -3578,6 +4058,42 @@
   wireStarCards();
   wireMedtech();
   renderAll();
+
+  // Edit mode: tag editables (after dynamic content is rendered), apply persisted edits, wire handlers
+  tagEditables();
+  applyEdits();
+  wireEditHandlers();
+
+  // Re-tag and re-apply edits whenever dynamic regions re-render
+  // (translator filters, drill marks, medtech quiz reveals all rebuild innerHTML)
+  const dynamicContainers = [
+    document.getElementById('translator-list'),
+    document.getElementById('drill-list'),
+    document.getElementById('medtech')
+  ].filter(Boolean);
+
+  if (window.MutationObserver && dynamicContainers.length) {
+    let retagScheduled = false;
+    const observer = new MutationObserver(() => {
+      if (retagScheduled) return;
+      retagScheduled = true;
+      // Debounce — batch rapid mutations
+      requestAnimationFrame(() => {
+        retagScheduled = false;
+        tagEditables();
+        applyEdits();
+        if (editModeOn) {
+          document.querySelectorAll('.editable').forEach(el => {
+            el.contentEditable = 'true';
+            el.spellcheck = true;
+          });
+        }
+      });
+    });
+    dynamicContainers.forEach(c => {
+      observer.observe(c, { childList: true, subtree: true });
+    });
+  }
 
   // Transcript module toggle (outside medtech section)
   const transcriptHeader = document.querySelector('.module-header[data-mod="transcript"]');

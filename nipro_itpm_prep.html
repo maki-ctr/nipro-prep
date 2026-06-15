@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nipro IT PM — Screening Prep</title>
+<style>
+  :root {
+    /* Slate / copper — deliberately distinct from v7.5 forest (MedTech) so you never open the wrong file */
+    --slate: #2b3a47;
+    --slate-soft: #3e5263;
+    --steel: #6b7f91;
+    --accent: #b9663a;
+    --accent-soft: #ddb097;
+    --paper: #f4f3f0;
+    --paper-warm: #e9e7e1;
+    --ink: #1d2329;
+    --ink-soft: #46505a;
+    --muted: #888f96;
+    --rule: #d3d0c8;
+    --highlight: #f1e6b8;
+    --green-tick: #2d5a3d;
+    --amber: #9a6320;
+    --red: #9d3f30;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 24px 20px 80px; }
+  header.top { border-bottom: 3px solid var(--slate); padding-bottom: 14px; margin-bottom: 8px; }
+  header.top h1 { color: var(--slate); font-size: 26px; margin: 0 0 4px; }
+  header.top .sub { color: var(--ink-soft); font-size: 15px; }
+  header.top .meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  nav.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 24px; position: sticky; top: 0; background: var(--paper); padding: 10px 0; z-index: 10; border-bottom: 1px solid var(--rule); }
+  nav.tabs button {
+    border: 1px solid var(--rule); background: var(--paper-warm); color: var(--ink-soft);
+    padding: 7px 13px; border-radius: 20px; font-size: 13px; cursor: pointer; min-height: 40px;
+  }
+  nav.tabs button.active { background: var(--slate); color: #fff; border-color: var(--slate); }
+  nav.tabs button:hover:not(.active) { border-color: var(--steel); }
+  nav.tabs .tab-group { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); align-self: center; padding: 0 2px 0 4px; }
+  nav.tabs .tab-sep { width: 100%; height: 0; }
+  @media (min-width: 601px) { nav.tabs .tab-sep { width: 1px; height: 26px; background: var(--rule); margin: 0 4px; align-self: center; } }
+  section.panel { display: none; }
+  section.panel.active { display: block; }
+  h2 { color: var(--slate); font-size: 20px; border-bottom: 2px solid var(--rule); padding-bottom: 6px; margin-top: 8px; }
+  h3 { color: var(--slate-soft); font-size: 16px; margin: 22px 0 6px; }
+  .lede { color: var(--ink-soft); font-size: 15px; }
+  .card {
+    background: #fff; border: 1px solid var(--rule); border-left: 4px solid var(--accent);
+    border-radius: 6px; padding: 14px 16px; margin: 12px 0;
+  }
+  .card.slate { border-left-color: var(--slate); }
+  .card.amber { border-left-color: var(--amber); }
+  .card.green { border-left-color: var(--green-tick); }
+  .reveal-q { font-weight: 600; color: var(--ink); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 40px; }
+  .reveal-q .arrow { color: var(--accent); transition: transform .2s; flex-shrink: 0; }
+  .reveal-q.open .arrow { transform: rotate(90deg); }
+  .reveal-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--rule); color: var(--ink-soft); font-size: 14.5px; }
+  .reveal-body.show { display: block; }
+  .tcard { background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin: 10px 0; }
+  .tcard .nat { color: var(--ink); font-size: 15px; }
+  .tcard .nat::before { content: "You'll reach for: "; color: var(--muted); font-size: 12px; font-weight: 600; display: block; margin-bottom: 2px; }
+  .tcard .pm { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--rule); color: var(--slate); font-size: 15px; font-weight: 500; }
+  .tcard .pm.show::before { content: "Say instead: "; color: var(--muted); font-size: 12px; font-weight: 600; display: block; margin-bottom: 2px; }
+  .tcard .pm.show { display: block; }
+  .tcard .note { display: none; margin-top: 6px; color: var(--ink-soft); font-size: 13px; font-style: italic; }
+  .tcard .note.show { display: block; }
+  .tcard .reveal-btn { margin-top: 8px; border: 1px solid var(--rule); background: var(--paper-warm); color: var(--ink-soft); padding: 5px 11px; border-radius: 5px; font-size: 12.5px; cursor: pointer; min-height: 36px; }
+  .pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: var(--paper-warm); color: var(--ink-soft); margin-left: 6px; }
+  .pill.hi { background: #efd9c8; color: var(--accent); }
+  ul.tight { margin: 6px 0; padding-left: 20px; }
+  ul.tight li { margin-bottom: 5px; }
+  .star-block { background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; margin: 14px 0; }
+  .star-label { font-weight: 700; color: var(--slate); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; margin-top: 10px; }
+  .star-text { font-size: 14.5px; color: var(--ink-soft); margin-top: 2px; }
+  .keep { background: var(--highlight); padding: 1px 4px; border-radius: 3px; }
+  footer.foot { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 12.5px; }
+  @media (max-width: 600px) { .wrap { padding: 16px 14px 70px; } header.top h1 { font-size: 22px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Nipro — IT Project Manager</h1>
+    <div class="sub">Screening + hiring-manager rounds · IT/business-application delivery</div>
+    <div class="meta">IT &amp; Digitalization team, Mechelen · fluent English only · warm prior contact via Mehdi's team. Your one job this round: <strong>let the PM craft transpire early</strong> — lead with register, not outcomes.</div>
+  </header>
+
+  <nav class="tabs">
+    <span class="tab-group">Screening</span>
+    <button class="active" data-tab="frame">Frame</button>
+    <button data-tab="translator">Register</button>
+    <button data-tab="stars">STAR cards</button>
+    <button data-tab="gaps">Gaps</button>
+    <span class="tab-sep"></span>
+    <span class="tab-group">Hiring-manager rounds</span>
+    <button data-tab="govern">Governance depth</button>
+    <button data-tab="tech">Technical fluency</button>
+    <button data-tab="drill">Drill</button>
+    <button data-tab="ask">Ask them</button>
+  </nav>
+
+  <!-- ===== FRAME ===== -->
+  <section class="panel active" id="frame">
+    <h2>The frame for this call</h2>
+    <p class="lede">This is a <strong>different role from the Digital Ecosystem PM</strong> you screened for. That one centred on connected-device / digital-health territory, where your MedTech regulatory gap was load-bearing. This one is generic <strong>IT and business-application delivery</strong> in a complex international environment — the thing you've actually done for fifteen years. The regulatory apparatus is context here, not subject. Do not lead with ISO 13485 / IEC 62304; this isn't that role.</p>
+
+    <div class="card slate">
+      <strong>What this role actually asks for</strong>
+      <ul class="tight">
+        <li>IT &amp; business-application project delivery, initiation → implementation → handover</li>
+        <li>Translating business requirements into structured plans</li>
+        <li>Coordinating cross-functional teams, stakeholders, and <strong>external partners / service providers</strong></li>
+        <li>Budget, timeline, governance, risk, transparent communication</li>
+        <li>Agile / Waterfall · fluent English · 5–10 yrs in complex international environments</li>
+      </ul>
+    </div>
+
+    <div class="card amber">
+      <strong>Your one self-diagnosed miss last time</strong><br>
+      In Mehdi's screening you used <em>outcomes language</em> where <em>PM register</em> was needed — the craft didn't fully transpire. That's the single thing to fix. The Register tab is the fix. Open this call by describing <em>how you ran</em> things (planning cadence, escalation discipline, decision audit trail), not just what resulted.
+    </div>
+
+    <div class="card green">
+      <strong>What's working in your favour</strong>
+      <ul class="tight">
+        <li>Warm candidate — already screened and rated by Mehdi's team. Not cold.</li>
+        <li>Fluent-English-only role: no language wall.</li>
+        <li>Core lane: OLX / Moza / Crossmedia is exactly multi-country IT/app delivery.</li>
+        <li>Current toolkit (Agile cert, AI-augmented PM) most IT PMs won't have.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong>Tone reminder (from prior prep).</strong> Senior PMs sound a little casual describing their work. Drill the register, not a script — over-rehearsed delivery reads as junior. If you've said a STAR answer the same way five times, loosen it.
+    </div>
+
+    <div class="card slate">
+      <strong>How this doc is split.</strong> The menu has two groups. <strong>Screening</strong> (Frame · Register · STAR cards · Gaps) is the lighter first-conversation layer — and since you've already screened once for the R&amp;D role, this round may be compressed or skipped. <strong>Hiring-manager rounds</strong> (Governance depth · Technical fluency · Drill · Ask them) is the deeper layer for when you're in front of someone who actually runs these projects. Governance depth is your spine and where you should steer the conversation; Technical fluency is the contained section that drills the honest-framing answers so the ISO 27001 / NIS2 / degree probes don't catch you flat. Prep both — you can't control which door you walk through first.
+    </div>
+  </section>
+
+  <!-- ===== TRANSLATOR ===== -->
+  <section class="panel" id="translator">
+    <h2>Register translator</h2>
+    <p class="lede">The core drill. Read the natural phrasing aloud, answer as you would, then reveal the PM register. Mark nothing — just notice which ones you reached for the weak version of. These are re-pointed for an <strong>IT/business-application</strong> role (vendor management, governance, requirements), not MedTech.</p>
+
+    <div id="tcards"></div>
+  </section>
+
+  <!-- ===== STARS ===== -->
+  <section class="panel" id="stars">
+    <h2>STAR cards</h2>
+    <p class="lede">Three verified stories. Facts are checked — keep the <span class="keep">highlighted</span> specifics, they're what make it senior. Lead selection by probe type.</p>
+
+    <div class="star-block">
+      <h3>PreBank — greenfield mobile banking <span class="pill hi">product ownership · exec sponsor</span></h3>
+      <div class="star-label">Situation</div>
+      <div class="star-text">Greenfield mobile banking initiative at Moza Banco, <span class="keep">board-sponsored at administration level</span>, independent of the bank's legacy channels. Internal IT deliberately out of the loop — their capacity was committed to the legacy roadmap, and the board wanted to de-risk the concept before drawing on it.</div>
+      <div class="star-label">Task</div>
+      <div class="star-text">Sole product lead — vision through demo, <span class="keep">under three months</span>, with an external development studio, inside the Banco de Moçambique regulatory framework.</div>
+      <div class="star-label">Action (lead with register)</div>
+      <div class="star-text">Owned the requirement definition and the delivery plan; coordinated a <span class="keep">four-function shape</span> — dev vendor, executive sponsor, Compliance/Risk/Legal, Marketing/Commercial — with a working tracker and an email-based decision audit trail. Made a <span class="keep">demo-first scoping call</span> to prove the concept before committing the heavier build.</div>
+      <div class="star-label">Result</div>
+      <div class="star-text">Demonstrable product at demo stage on time, framed for downstream regulatory review. <em>For an IT PM probe: emphasise the requirements-to-delivery governance and the vendor coordination, not the banking regulation.</em></div>
+    </div>
+
+    <div class="star-block">
+      <h3>Credit-card insurance product — six-function matrix <span class="pill hi">stakeholder · escalation</span></h3>
+      <div class="star-label">Situation</div>
+      <div class="star-text">Month two at Moza Banco, sponsored workstream to design an insurance product over a <span class="keep">1,763-account portfolio</span> across three tiers (Classic, Gold, Platinum). Verbal brief, <span class="keep">three-week deadline</span>, output a complete product document ready for review and launch.</div>
+      <div class="star-label">Action</div>
+      <div class="star-text">Ran a <span class="keep">six-function cross-functional matrix</span> — Risk / Compliance / Legal / IT / Finance / Card Tech — with directed escalation rather than ad-hoc chasing. Benchmarked incumbents (<span class="keep">Global, Tranquilidade</span>), built the multi-tier pricing model and projected uptake by segment.</div>
+      <div class="star-label">Result</div>
+      <div class="star-text">Complete, launch-ready product document delivered to deadline. <em>Lead with this for stakeholder-management or escalation-discipline probes.</em></div>
+    </div>
+
+    <div class="star-block">
+      <h3>Mulala — founder, full app lifecycle <span class="pill hi">delivery · vendor · scope discipline</span></h3>
+      <div class="star-label">Situation / Task</div>
+      <div class="star-text">Founded and shipped a consumer mobile app end-to-end as sole product owner — two stores, real users.</div>
+      <div class="star-label">Action</div>
+      <div class="star-text">Ran an engineering studio (<span class="keep">MobileFirst, Lisbon — Ricardo Batista lead dev</span>, an established Crossmedia delivery partner) and a design studio (<span class="keep">OXO — Gonçalo Fernandes on UI</span>), UX owned directly by me, against a written backlog with iterative releases. <span class="keep">Android v0.17 June 2016</span> iterating through v1.1 / v1.12 / v1.3; <span class="keep">iOS to App Store June 2017</span>. Version control via Bitbucket, weekly check-ins, feature acceptance against spec. Ran the operational layer myself — AWS S3 + SES (handled the bounce-rate appeal with Amazon directly), Mailchimp, Crashlytics. Post-launch, a <span class="keep">structured B2B distribution outreach</span> — Zap Angola Oct 2016, then Unitel Sept 2017, a brand-partnership pitch escalated to a licensing offer when it stalled.</div>
+      <div class="star-label">Result / the "why did it fail" trap</div>
+      <div class="star-text">Shipped and operationally sound; monetisation and distribution didn't close. <span class="keep">"The build worked. The unit economics didn't."</span> Stopped active development rather than fund another cycle — portfolio management under constraint, not a failed startup. Making the go/no-go call <em>early, with criteria</em> is the senior signal; chasing sunk cost is the junior one.</div>
+    </div>
+  </section>
+
+  <!-- ===== GAPS ===== -->
+  <section class="panel" id="gaps">
+    <h2>Gaps — re-pointed for this role</h2>
+    <p class="lede">The IEC 62304 / SaMD gap that dominated the Digital Ecosystem prep is <strong>not load-bearing here</strong>. Two different soft spots matter, both honest, both two sentences then move on. Same discipline as before: acknowledge, don't deflect, don't overclaim.</p>
+
+    <div class="card amber">
+      <strong>Gap 1 — degree is Marketing, not IT.</strong> This is a stated requirement ("Degree in IT or related field"), so it may surface.
+      <div class="reveal-q" onclick="tog(this)"><span>Your two-sentence answer</span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        "My degree is in Marketing, but the last fifteen years have been hands-on IT and digital delivery — platforms, mobile applications, business-application projects across several countries. I'd let that record speak rather than the diploma." Then pivot straight to a delivery example. <strong>Don't apologise, don't over-explain.</strong> The work is the credential.
+      </div>
+    </div>
+
+    <div class="card amber">
+      <strong>Gap 2 — ISO 27001 / NIS2 are "knowledge of," not hands-on.</strong> These are <em>preferred</em>, not essential — so this is a bonus-points gap, not a disqualifier.
+      <div class="reveal-q" onclick="tog(this)"><span>Your two-sentence answer</span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        "I have a working awareness of the ISO 27001 and NIS2 principles and a Healthcare Data Security &amp; Risk Management certificate, but I haven't run an ISO 27001 programme hands-on. I'd treat deepening that as an early priority rather than overstate where I am today." Honest framing verbs only: <em>"working awareness," "the way I understand it," "what's clicked studying it"</em> — never "I've implemented."
+      </div>
+    </div>
+
+    <div class="card slate">
+      <strong>Toyota — one line, confident, move on.</strong> If asked about the current role: deliberate transitional/operational role on relocating to Belgium, used the time to build the certification stack and complete internal TPS/PDCA training. Never say "warehouse." One sentence, then back to delivery.
+    </div>
+  </section>
+
+  <!-- ===== GOVERNANCE DEPTH ===== -->
+  <section class="panel" id="govern">
+    <h2>Governance depth — the hiring-manager spine</h2>
+    <p class="lede">A hiring manager who runs IT projects probes whether you can <em>actually run them</em>, not just narrate outcomes. These are the deeper, scenario-driven versions of the screening drill. Answer aloud; the scaffold is what a senior answer contains, not a script to memorise. This is your home turf — the bulk of the round should live here, and you should steer it here.</p>
+
+    <div class="card slate">
+      <strong>The thread that ties them all together.</strong> Every strong answer in this section has the same skeleton: <em>how I structured it</em> (plan, tracker, decision trail) → <em>how I governed it</em> (cadence, escalation, risk register) → <em>a real moment of tension and the call I made</em> → <em>what it produced</em>. Result last, never first. That ordering <strong>is</strong> the PM craft transpiring.
+    </div>
+
+    <h3>Delivery &amp; oversight</h3>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>Tell me about your most complex project — what made it complex, and how did you hold it together? <span class="pill hi">flagship</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Lead with <strong>Crossmedia at peak</strong>: up to six concurrent projects across seven countries as single accountable contact, internal teams plus up to four external vendors per programme, multi-currency budgets. Complexity wasn't one hard project — it was <em>concurrency and distribution</em>. How you held it: a portfolio view (one tracker, not six), a fixed reporting cadence per client, escalation routed by decision-owner not by who shouted loudest, and a single decision trail per workstream so context didn't live in your head. Then narrow to one project as the worked example. <strong>This is your strongest card for "complex international environment" — the exact JD phrase.</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>Tell me about a project that went sideways. What happened and what did you do? <span class="pill hi">the real probe</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Use <strong>Mulala</strong> — it's the honest one and it reads senior <em>if framed right</em>. The build shipped to both stores; what went sideways was commercial, not delivery — monetisation didn't materialise on organic acquisition and neither distribution conversation (Zap, Unitel) closed. The PM content is the <em>decision</em>: "I knew within four months that distribution, not product, was the bottleneck. I ran structured outreach — partnership pitch escalated to a licensing offer. When neither closed, I stopped active development rather than fund another cycle. That's portfolio management under constraint — making the go/no-go call early, with criteria, not chasing sunk cost." <strong>Never say "it failed." Say what the build proved and what the call was.</strong> Avoid PreBank/insurance here — those went <em>right</em>; this question wants a genuine reverse.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>How do you keep a multi-stakeholder project from drifting? <span class="pill hi">oversight</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        The insurance product is the clean evidence: six-function matrix (Risk/Compliance/Legal/IT/Finance/Card Tech), verbal brief, three-week deadline, delivered. Mechanics: a single owner per function, directed escalation (issue goes to the decision-owner with a recommendation, not a broadcast), a working tracker everyone reads, and decisions logged so "we agreed X" is never disputed. Drift happens when nobody owns the thread or the decision history is fuzzy — you close both.
+      </div>
+    </div>
+
+    <h3>Planning &amp; risk</h3>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>How do you build a plan when the requirements are vague at the start? <span class="pill hi">planning</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        PreBank: vague board ambition → scoped, demo-first delivery plan. The skill is <em>sequencing under ambiguity</em> — you don't wait for perfect requirements, you scope a first provable increment (the demo), define what it must answer, and let that retire the biggest unknowns before committing the heavier build. Name it as a deliberate de-risking sequence, not improvisation.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>Walk me through how you manage risk on a project. <span class="pill hi">risk</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Don't say "I keep an eye on risks." Say: a risk register where each item has an owner, a likelihood/impact read, and a mitigation or contingency — not just awareness. Reviewed on the steering cadence, not when it's already a fire. The AWS/SES bounce-rate episode on Mulala is a concrete micro-example: an operational risk that hit, and I handled the appeal with Amazon directly rather than letting it stall the product — evidence you run the operational layer, not just the Gantt chart.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>A senior stakeholder wants something that breaks the plan. What do you do? <span class="pill hi">escalation</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Not "I push back" and not "I just do it." You quantify the trade-off and hand the decision up with a recommendation: "This adds X to scope and moves the date by Y; here are two options and the one I'd recommend, and why." Controlled scope variation with a documented decision — the sponsor owns the call, you own that it's made consciously and recorded. This is exactly the register that signals seniority.
+      </div>
+    </div>
+
+    <h3>Vendors &amp; external partners</h3>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>You'll work heavily with external partners and service providers here. How do you manage that relationship so delivery doesn't slip? <span class="pill hi">vendor · high JD weight</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Your deepest evidence base — say so. Mulala two-vendor structure (MobileFirst engineering, OXO design) run against a written backlog with version-by-version acceptance against spec, weekly check-ins, Bitbucket as the source of truth. PreBank external dev studio to demo under deadline. Crossmedia up to four agencies per programme. The governance is identical regardless of vendor: a clear SOW/backlog, acceptance criteria you actually enforce, a single decision trail, and you owning the integration risk between vendors so neither can point at the other. <strong>Name "acceptance against spec" — that one phrase tells a hiring manager you've actually managed vendors, not just hired them.</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>How do you hold a vendor accountable when they're underdelivering? <span class="pill hi">vendor</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Acceptance against spec is the lever — if a release doesn't meet the written criteria, it isn't accepted, and that's a factual conversation not a personal one. You catch it early because check-ins are weekly and acceptance is per-version, so underdelivery shows at increment one, not at the deadline. The relationship stays workable because the standard was agreed up front and applied consistently. If it persists, you escalate with evidence (the acceptance trail), not vibes.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TECHNICAL FLUENCY ===== -->
+  <section class="panel" id="tech">
+    <h2>Technical fluency — contained, honest</h2>
+    <p class="lede">This is where your honest gaps live, so it's drilled for <strong>composure, not bluffing</strong>. You're an IT PM, not an engineer or a security officer — a good hiring manager knows that and is testing whether you can operate <em>around</em> technical depth credibly, not whether you have it. The winning posture: confident about what you do understand, clean and unembarrassed about what you don't, always with a "here's how I'd close it" tail. Same honest-framing verbs as always — <em>"working awareness," "the way I understand it," "what's clicked studying it"</em> — never "I've implemented" or "I've run."</p>
+
+    <div class="card amber">
+      <strong>The rule for this whole section.</strong> An overclaim that gets exposed one question later is far more damaging than an honest "I haven't done that hands-on, here's what I do know." Hiring managers forgive gaps; they don't forgive a PM who'll misrepresent technical status — because that's the exact behaviour that sinks projects. Your honesty here is a <em>positive signal</em>, not damage control.
+    </div>
+
+    <h3>Security &amp; compliance standards (the ISO 27001 / NIS2 preference)</h3>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>What's your experience with ISO 27001? <span class="pill hi">named gap</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        "I have a working awareness of the framework — it's an information-security management system standard, risk-based, built around an ISMS with controls you select and justify against an assessed risk picture, and it runs on the same plan-do-check-act improvement loop I know well from Lean. I hold a Healthcare Data Security &amp; Risk Management certificate. But I haven't run an ISO 27001 certification programme hands-on, and I won't claim I have. On a project touching it, I'd partner with the security owner on the control decisions while I run the programme-level coordination, evidence-gathering, and audit-readiness — which is squarely PM work." <em>Acknowledge → show real structural understanding → name the boundary → show how you'd operate around it.</em>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>Do you know NIS2? <span class="pill hi">named gap</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        "At a principles level — it's the EU directive widening cybersecurity obligations across essential and important entities, heavier on risk management, incident reporting timelines, and board-level accountability than the regime it replaced. For a healthcare-adjacent organisation it raises the compliance bar. I understand why it matters to a project's requirements; I haven't delivered a NIS2 remediation programme. If one were in scope I'd treat the regulatory mapping as a workstream with the compliance owner and manage it like any other governed dependency." Short, oriented, honest. Don't manufacture depth you don't have.
+      </div>
+    </div>
+
+    <div class="card green">
+      <strong>Where you flip it to strength.</strong> You don't hold ISO 27001, but you <em>do</em> have genuine regulated-environment delivery — a banking product inside the Banco de Moçambique framework, SLA-controlled compliance work at Teleperformance. So: "I haven't certified an ISMS, but delivering inside binding external regulatory frameworks is familiar ground — I know what it means to have a launch gated by an external authority and to build the evidence trail for it." That reframes the gap from "no security background" to "comfortable with compliance-gated delivery," which is the thing the role actually needs.
+    </div>
+
+    <h3>The application &amp; cloud environment</h3>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>How comfortable are you with the technical side — cloud, the application landscape, integrations? <span class="pill hi">fluency</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Pitch at "fluent enough to manage, honest about not being the engineer." Real anchors you can stand on: ran an AWS operational layer directly on Mulala (S3, SES, and handled the SES deliverability appeal with Amazon myself), Bitbucket version control, Crashlytics production analytics, Shopify/Amazon e-commerce stacks, web↔mobile platform delivery at OLX. "I'm comfortable owning delivery across cloud-hosted applications and coordinating integration work — I can hold a credible conversation with engineers and architects and know when to defer to them on deep technical calls. I'm not going to position myself as the systems architect; I'm the person who makes sure the right technical decisions get made, recorded, and delivered."
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>The degree is in Marketing — talk me through how you ended up doing IT delivery. <span class="pill hi">degree gap</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Don't get defensive or apologetic. "The degree is Marketing; the last fifteen years are IT and digital delivery — classifieds platforms at OLX with full P&amp;L, a mobile banking product, a shipped consumer app, multi-country application projects at Crossmedia. The craft is hands-on and the record is the evidence. I've since added the formal PM and AI certifications to put structure around what I'd already been doing." Then immediately pivot to a delivery example so the conversation moves off the diploma and onto the work. <strong>The work is the credential — say it once, prove it, move on.</strong>
+      </div>
+    </div>
+
+    <div class="card slate">
+      <strong>If they push on something you genuinely don't know:</strong> "I haven't worked with that directly — can you tell me how it's used in your environment?" Turning a gap into a genuine question is a senior move; pretending is a junior one. You will not lose this round for not knowing a specific tool. You could lose it for bluffing one.
+    </div>
+  </section>
+
+  <!-- ===== DRILL ===== -->
+  <section class="panel" id="drill">
+    <h2>Question drill</h2>
+    <p class="lede">Re-weighted for the IT PM JD: <strong>IT/app delivery &amp; oversight (35%) · vendor &amp; external-partner management (25%) · planning &amp; governance (25%) · requirements translation (15%)</strong>. Answer aloud first, then expand to check what you missed.</p>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>Walk me through how you run a project from initiation to handover. <span class="pill hi">oversight</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Lead with <em>structure</em>, not a story: requirement definition → structured plan with milestones and a working tracker → cadence of steering with directed escalation → risk and decision log with an email-based audit trail → clean handover with documentation. <em>Then</em> anchor it to OLX or PreBank. The shape is the answer; the project is the evidence.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>How do you manage external partners and service providers? <span class="pill hi">vendor · NEW</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        This is more prominent in this JD than the last one — give it a real answer. "I've run delivery through external studios repeatedly — up to four vendors per programme at Crossmedia. The discipline is the same: a written backlog or SOW, feature acceptance against spec, weekly check-ins, and a single decision trail so nothing depends on memory." Anchor: <strong>Mulala</strong> (MobileFirst engineering + OXO design, two-vendor structure, Bitbucket acceptance) or <strong>PreBank</strong> (external dev studio to demo). Name the version-by-version acceptance — that's the concrete evidence that reads senior.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>Tell me about a project where you had to translate business requirements into a deliverable. <span class="pill hi">requirements</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        PreBank is the cleanest: vague board ambition → scoped, demo-first delivery plan. Or the insurance product: verbal three-week brief → complete launch-ready product document. Emphasise the <em>act of structuring ambiguity</em> — that's the skill being probed.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>How do you handle a project that's slipping — budget or timeline? <span class="pill hi">governance</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Register, not heroics: "I track deviation against the working tracker, so slippage shows early, not at the deadline. I surface it with options, not just a problem — re-scope, re-sequence, or escalate the trade-off to the sponsor with a recommendation." The Mulala go/no-go call is your evidence of disciplined decision-making under constraint.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>You've worked across many countries — how do you drive a consistent process across distributed teams? <span class="pill hi">oversight</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Don't force one format — co-design, pilot, then standardise. 10xMeglio analogue: hybrid reporting template co-designed with the Lisbon lead, piloted two weeks, rolled out; adoption measured simply (on-time, all fields complete) and moved 40% → 100% over four weeks. The shape, honestly scaled.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="reveal-q" onclick="tog(this)"><span>Why this role, and why Nipro? <span class="pill hi">motivation</span></span><span class="arrow">▸</span></div>
+      <div class="reveal-body">
+        Core-lane fit (multi-country IT/app delivery is what you do) + genuine interest in Nipro from the earlier conversation + the healthcare investment was deliberate, not incidental. Keep it short and specific; don't oversell the MedTech angle in an IT-team role.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ASK THEM ===== -->
+  <section class="panel" id="ask">
+    <h2>Questions to ask them</h2>
+    <ul class="tight">
+      <li>How is the IT &amp; Digitalization team structured, and where does this role sit relative to the business areas it serves?</li>
+      <li>What does the project portfolio look like right now — more new business-application rollouts, or optimisation of existing systems?</li>
+      <li>What's the balance between internal delivery and external partners / service providers?</li>
+      <li>What would a successful first six months look like in this role?</li>
+      <li>How does the IT team work with the regulated side of the business — where do governance and security standards (ISO 27001, NIS2) actually touch the project work?</li>
+      <li>What's the interview process from here?</li>
+    </ul>
+    <div class="card">
+      <strong>If it's Mehdi or his team again:</strong> a light acknowledgement is fine ("good to be talking again"), then straight to substance. You don't need to re-litigate the earlier role — your job is to show the PM craft transpiring this time.
+    </div>
+  </section>
+
+  <footer class="foot">
+    Two-stage build · slate/copper palette to distinguish from the v7.5 MedTech file (forest/stone), which stays intact for any MedTech-specific Nipro round. Screening layer is the light first-conversation prep; hiring-manager layer covers governance depth and contained technical-fluency drilling. STAR facts carried verified from v7.5. Content is preparation scaffolding, not a script.
+  </footer>
+</div>
+
+<script>
+  // Tabs
+  document.querySelectorAll('nav.tabs button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('nav.tabs button').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('section.panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo(0,0);
+    });
+  });
+
+  // Reveal toggles (gaps + drill)
+  window.tog = function(el){
+    el.classList.toggle('open');
+    var body = el.nextElementSibling;
+    if (body) body.classList.toggle('show');
+  };
+
+  // Translator cards — re-pointed for IT/business-application delivery
+  var T = [
+    { nat: "Whenever something came up, I'd sort it out.", pm: "I ran ad-hoc steering with directed escalation — issues went to the right owner with a recommendation, not just a flag.", note: "Directed escalation is the phrase. It signals you control the flow, not react to it." },
+    { nat: "I kept track in a spreadsheet and emails.", pm: "I worked off a live tracker with an email-based decision audit trail, so nothing depended on memory.", note: "Audit trail reframes informal tooling as deliberate governance." },
+    { nat: "I managed the vendors.", pm: "I ran delivery through external studios against a written backlog with feature acceptance against spec and weekly check-ins.", note: "Names the actual mechanics — acceptance against spec is the senior tell." },
+    { nat: "We figured out what they wanted and built it.", pm: "I translated a loosely-defined business ambition into a scoped, sequenced delivery plan.", note: "Requirements translation is explicitly in this JD. Say the words." },
+    { nat: "I checked in with everyone regularly.", pm: "I held a steering cadence with the cross-functional stakeholders and logged decisions as we went.", note: "Cadence + decision log = governance, not chatter." },
+    { nat: "I made sure it stayed on budget.", pm: "I owned the budget envelope and tracked deviation against the working tracker, so slippage surfaced early.", note: "Budget envelope + deviation tracking is the financial-oversight register." },
+    { nat: "There were a few teams involved.", pm: "I coordinated a cross-functional matrix as the single accountable point of contact.", note: "Single accountable POC is exactly the JD's language." },
+    { nat: "I handed it over when it was done.", pm: "I ran a structured handover — documentation, open-items log, and a named owner for each thread.", note: "Handover is in the JD. Treat it as a deliverable, not an afterthought." },
+    { nat: "I dealt with the risks as they came.", pm: "I maintained a risk register and managed each item to an owner and a mitigation, not just awareness.", note: "Register + owner + mitigation. Reactive becomes structured." },
+    { nat: "I worked with the developers.", pm: "I sat at the interface between business stakeholders and the delivery team, translating each direction for the other.", note: "Bridge language — the JD asks for exactly this." },
+    { nat: "We used Agile, sort of.", pm: "Iterative in shape — written backlog, version-by-version acceptance — lighter on ceremony than a formal Scrum, and I'm clear about which.", note: "Honest about ritual vs structure. Don't overclaim formal Scrum." },
+    { nat: "I reported up to the sponsor.", pm: "I gave the executive sponsor structured progress updates with decisions framed as options and a recommendation.", note: "Options + recommendation is how seniors report up." },
+    { nat: "It went really well / we hit our numbers.", pm: "[lead with HOW first, then the result] — I ran X this way, and the outcome was Y.", note: "THE key card. Your screening miss was outcomes-first. Flip it: process, then result." },
+    { nat: "I learned a lot from it.", pm: "The lesson was specific — validate the commercial model before scaling delivery — and I've applied it since.", note: "Name the actual lesson. Vague 'I learned a lot' reads junior." }
+  ];
+  var box = document.getElementById('tcards');
+  T.forEach(function(c, i){
+    var d = document.createElement('div');
+    d.className = 'tcard';
+    d.innerHTML =
+      '<div class="nat">' + c.nat + '</div>' +
+      '<div class="pm" id="pm'+i+'">' + c.pm + '</div>' +
+      '<div class="note" id="nt'+i+'">' + c.note + '</div>' +
+      '<button class="reveal-btn" data-i="'+i+'">Reveal PM register</button>';
+    box.appendChild(d);
+  });
+  box.querySelectorAll('.reveal-btn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var i = b.dataset.i;
+      document.getElementById('pm'+i).classList.toggle('show');
+      document.getElementById('nt'+i).classList.toggle('show');
+      b.textContent = document.getElementById('pm'+i).classList.contains('show') ? 'Hide' : 'Reveal PM register';
+    });
+  });
+</script>
+</body>
+</html>
